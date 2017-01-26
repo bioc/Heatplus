@@ -1007,15 +1007,18 @@ regHeatmap.default = function(x, dendrogram=list(clustfun=hclust, distfun=dist, 
 
 {{{\subsection{Default standard annotated heatmap}
 
-We plot a standard annotated heatmap (annotated columns, no row dendrogram):
+We plot a standard annotated heatmap (annotated columns, no row dendrogram); note that we explicitly check for \Rfunarg{annotation} to be a data frame (legitimate for an annotated heatmap) to avoid cryptic error messages downstream.
 <<annHeatmap_Def>>=
 annHeatmap.default = function(x, annotation, dendrogram=list(clustfun=hclust, distfun=dist, Col=list(status="yes"), Row=list(status="hidden")), cluster=NULL, labels=NULL, legend=TRUE, ...)
 {
+	if (!is.data.frame(annotation)) stop("Argument 'annoation' needs to be data frame")
+
     ret = annHeatmap2(x, dendrogram=dendrogram, annotation=list(Col=list(data=annotation, fun=picketPlot)), cluster=cluster,  labels=labels, legend=TRUE, ...)
     ret
 }
 @
 FIXME: The glaring disdavantage is that while this makes specification of the annotation slightly simpler, it does not allow to specify e.g.  \Rfunarg{inclRef}.
+FIXME: the check for data frame is only a start, there have to be better checks wrt to data / annotation agreement; hopefully this can be done downstream
 
 }}}
 

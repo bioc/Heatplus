@@ -860,6 +860,8 @@ regHeatmap.default = function(x, dendrogram=list(clustfun=hclust, distfun=dist, 
 ###################################################
 annHeatmap.default = function(x, annotation, dendrogram=list(clustfun=hclust, distfun=dist, Col=list(status="yes"), Row=list(status="hidden")), cluster=NULL, labels=NULL, legend=TRUE, ...)
 {
+	if (!is.data.frame(annotation)) stop("Argument 'annoation' needs to be data frame")
+
     ret = annHeatmap2(x, dendrogram=dendrogram, annotation=list(Col=list(data=annotation, fun=picketPlot)), cluster=cluster,  labels=labels, legend=TRUE, ...)
     ret
 }
