@@ -60,7 +60,8 @@ require(limma)
 design1 = model.matrix( ~ type, data=pData(exdat))
 lm1 = lmFit(exprs(exdat), design1)
 lm1 = eBayes(lm1)
-geneID = rownames(topTable(lm1, coef=2, num=100, adjust="none", p.value=0.05))
+geneID = rownames(topTable(lm1, coef=2, num=100, adjust="none", 
+	p.value=0.05))
 length(geneID)
 @
 (Of course, this is only for the example's sake, as it does not account for multiple testing.)
@@ -136,7 +137,7 @@ plot(reg4)
 
 Figure \ref{fig5} shows the default annotated heatmap for the full data set. Figure~\ref{fig6} shows the default annotated heatmap for the smaller data set, with the column dendrogram cut at distance 5000.
 
-Figure~\ref{fig6a} shows a similar plot as Figure~\ref{fig6}, but cut at a distiance of 7500 (resulting in two instead of three clusters) and with costumised cluster labels. 
+Figure~\ref{fig6a} shows a similar plot as Figure~\ref{fig6}, but cut at a distance of 7500 (resulting in two instead of three clusters) and with costumised cluster labels. 
 
 {{{ %% Fig5: annotated, defaults, full data
 \begin{figure}
@@ -154,7 +155,8 @@ plot(ann1)
 \begin{figure}
 \begin{center}
 <<annHeatmap2, fig=TRUE>>=
-ann2 = annHeatmap(exprs(exdat2), ann=pData(exdat2), cluster=list(cuth=5000))
+ann2 = annHeatmap(exprs(exdat2), ann=pData(exdat2), 
+	cluster=list(cuth=5000))
 plot(ann2)
 @
 \end{center}
@@ -237,8 +239,10 @@ plot(ann4a)
 \begin{center}
 <<annHeatmap6, fig=TRUE>>=
 ann4b = annHeatmap2(exprs(exdat2),
-  ann=list(inclRef=FALSE, Col=list(data=pData(exdat2)), Row=list(data=annFeatures)),
-  labels=list(Row=list(nrow=7), Col=list(nrow=2)))
+  ann=list( inclRef=FALSE, 
+		Col=list(data=pData(exdat2)), 
+		Row=list(data=annFeatures)   ), 
+	labels=list(Row=list(nrow=7), Col=list(nrow=2)))
 plot(ann4b, widths=c(2,5,1), heights=c(2,5,1))
 @
 \end{center}
