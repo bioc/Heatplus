@@ -125,7 +125,7 @@ reg4 = regHeatmap(exprs(exdat2), legend=3,
 plot(reg4)
 @
 \end{center}
-\caption{Heatmap with row- and column dendrograms and a legend for 46 genes and 26 samples. The column dendrogram is not shown, though the samples are still arranged as in Figure \ref{fig2}.\label{fig4}}
+\caption{Heatmap with a row dendrogram and a legend, for 46 genes and 26 samples. The column dendrogram is not shown, though the samples are still arranged as in Figure \ref{fig2}, i.e. sorted according to the hidden column dendrogram.\label{fig4}}
 \end{figure}
 }}}
 
@@ -146,7 +146,7 @@ ann1 = annHeatmap(exprs(exdat), ann=pData(exdat))
 plot(ann1)
 @
 \end{center}
-\caption{Annotated heatmap with row- and column dendrograms and a legend for 500 genes and 26 samples.\label{fig5}}
+\caption{Annotated heatmap with column dendrogram and a legend, for 500 genes and 26 samples.\label{fig5}}
 \end{figure}
 }}}
 
@@ -158,7 +158,7 @@ ann2 = annHeatmap(exprs(exdat2), ann=pData(exdat2), cluster=list(cuth=5000))
 plot(ann2)
 @
 \end{center}
-\caption{Annotated heatmap with row- and column dendrograms and a legend for 46 genes and 26 samples. The column dendrogram is cut at $h=5000$\label{fig6}}
+\caption{Annotated heatmap with column dendrogram and a legend, for 46 genes and 26 samples. The column dendrogram is cut at $h=5000$\label{fig6}}
 \end{figure}
 }}} 
 
@@ -171,7 +171,7 @@ ann3 = annHeatmap(exprs(exdat2), ann=pData(exdat2),
 plot(ann3)
 @
 \end{center}
-\caption{Annotated heatmap with row- and column dendrograms and a legend for 46 genes and 26 samples. The column dendrogram is cut at $h=7500$\label{fig6a}, and we add cluster names, based on the annotation.}
+\caption{Annotated heatmap with column dendrogram and a legend, for 46 genes and 26 samples. The column dendrogram is cut at $h=7500$\label{fig6a}, and we add cluster names, based on the annotation.}
 \end{figure}
 }}} 
 
