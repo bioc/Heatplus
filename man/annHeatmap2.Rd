@@ -72,7 +72,7 @@ a list that controls the row- and column labels, as well as their size and place
         \item{cex}{size of the text for the labels; defaults to \code{NULL}, i.e. use a hard-coded default guess}
         \item{nrow}{amount of space available for the labels between the central heatmap and the dendrogram, expressed as lines of text; defaults to 3.}
         \item{side}{side at which to draw the labels, coded as integer between 1 and 4 in the usual way (1 = below the plot, continuing clockwise). A common default for rows and columns does not make sense: rows only work with 2 and 4, columns only with 1 and 3. Defaults try to make use of empty space, depending on the presence of a dendrogram.}
-        \item{labels}{labels for rows and columns; defaults to \code{NULL}, i.e. using the row- and column names of \code{x}.}
+        \item{labels}{labels for rows and columns; defaults to \code{NULL}, i.e. using the row- and column names of \code{x}. Note that these labels are applied \emph{after} re-sorting rows and columns as per dendrogram, so these have to be already sorted accordingly. If you want to change the labels \emph{before} re-sorting, it is is easier to re-set the row- and/or column names of \code{x}.}
     }
 }
 \value{
