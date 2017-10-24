@@ -1,3 +1,6 @@
+Changes in version 2.23.1
+    + Resolved issue with inconsistent plotting on the same device
+
 Changes in version 2.15.2
     + New color scheme for clusters to make neighboring clusters distinct
 
