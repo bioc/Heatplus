@@ -769,6 +769,11 @@ annHeatmap2 = function(x, dendrogram, annotation, cluster, labels, scale=c("row"
 ###################################################
 plot.annHeatmap = function(x, widths, heights, ...)
 {
+	## Preserve parameters that are set explicitly below
+	## Not doing this has lead to Issue 8: inconsistent distance
+	## between dendrogram and heatmap after repeated calls on same device
+	opar = par("oma", "mar", "xaxs", "yaxs")
+	on.exit(par(opar))
     ## If there are cluster labels on either axis, we reserve space for them
     doRClusLab = !is.null(x$cluster$Row$label) 
     doCClusLab = !is.null(x$cluster$Col$label)
