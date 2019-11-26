@@ -6,3 +6,9 @@ importFrom(stats, as.dendrogram, cutree, dist, hclust, loess,
 importFrom(RColorBrewer, brewer.pal.info, brewer.pal)           
 
 export(heatmap_2, heatmap_plus, RainbowPastel, BrewerClusterCol, RGBColVec, oldCutplot.dendrogram, oldPicketplot, convAnnData, picketPlot, annHeatmap2, regHeatmap, annHeatmap, annHeatmap.default, regHeatmap.default, plot.annHeatmap, g2r.colors, heatmapLayout, picketPlot, niceBreaks, breakColors, doLegend, print.annHeatmap, extractArg, modifyExistingList, annHeatmap.ExpressionSet)
+
+S3method(regHeatmap, default)
+S3method(annHeatmap, default)
+S3method(annHeatmap, ExpressionSet)
+S3method(plot, annHeatmap)
+S3method(print, annHeatmap)
