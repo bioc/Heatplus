@@ -692,7 +692,7 @@ annHeatmap2 = function(x, dendrogram, annotation, cluster, labels, scale=c("row"
         sd = apply(x2, 1, sd, na.rm = TRUE)
         x2 = sweep(x2, 1, sd, "/")
     }
-    else if (scale == "column") {
+    else if (scale == "col") {
         x2 = sweep(x2, 2, colMeans(x, na.rm = TRUE))
         sd = apply(x2, 2, sd, na.rm = TRUE)
         x2 = sweep(x2, 2, sd, "/")
