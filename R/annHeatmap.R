@@ -778,8 +778,8 @@ plot.annHeatmap = function(x, widths, heights, ...)
     doRClusLab = !is.null(x$cluster$Row$label) 
     doCClusLab = !is.null(x$cluster$Col$label)
     omar = rep(0, 4)
-    if (doRClusLab) omar[1] = 2
-    if (doCClusLab) omar[4] = 2
+    if (doRClusLab) omar[4] = 2
+    if (doCClusLab) omar[1] = 2
     par(oma=omar)
     ## Set up the layout    
     if (!missing(widths)) x$layout$width = widths
