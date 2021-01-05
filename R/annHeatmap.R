@@ -483,6 +483,7 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
 ###################################################
 ### code chunk number 6: picketPlotControl_Def
 ###################################################
+#' @rdname getLeaves 
 picketPlotControl = function()
 {
     list(boxw=1, boxh=4, hbuff=0.1, vbuff=0.1, span=1/3, nacol=gray(0.85), 
@@ -871,6 +872,14 @@ cutree.dendrogram = function(x, h)
 ###################################################
 ### code chunk number 13: getLeaves_Def
 ###################################################
+
+#' Undocumented functions
+#' 
+#' These functions are currently undocumented. Please refer to the source and
+#' source comments if you feel you need to use them.
+#' 
+#' @aliases getLeaves picketPlotControl
+#' @keywords internal
 getLeaves = function(x)
 {
     unlist(dendrapply(x, function(x) attr(x, "label")))
@@ -1160,9 +1169,7 @@ cutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3
 #' side where the legend is to be drawn; and \code{FALSE} indicates that no
 #' legend should be drawn.
 #' @return An object of class \code{annHeatmap}. Use \code{plot} to display it
-#' graphically. %% ~Describe the value returned %% If it is a LIST, use %%
-#' \item{comp1 }{Description of 'comp1'} %% \item{comp2 }{Description of
-#' 'comp2'} %% ...
+#' graphically. 
 #' @seealso \code{\link{heatmapLayout}}, \code{\link{niceBreaks}},
 #' \code{\link{breakColors}}, \code{\link{g2r.colors}}
 #' @keywords hplot
