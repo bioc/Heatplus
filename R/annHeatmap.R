@@ -9,6 +9,50 @@ options(width=75)
 ###################################################
 ### code chunk number 2: heatmapLayout_Def
 ###################################################
+
+
+#' Generate a layout for an (annotated) heatmap
+#' 
+#' Generate a layout for an (annotated) heatmap. This function will generally
+#' not be called directly, but only via \code{annHeatmap2}.
+#' 
+#' Space for plots is reserved via the \code{layout} mechanism. The function
+#' starts with an empty maximum layout, fills in the plot, dendrograms,
+#' annotation plots and legend as required, and compresses the resulting layout
+#' by removing empty slots.
+#' 
+#' @param dendrogram A list with named entries \code{Row} and \code{Col}. Each
+#' of these is a list with a named entry \code{status}. If the value of
+#' \code{status} is the string \code{"yes"}, space will be set aside for
+#' drawing a row- and/or column dendrogram.
+#' @param annotation A list with named entries \code{Row} and \code{Col}. Each
+#' of these is a list with a named entry \code{data}. If the value of
+#' \code{data} is not \code{NULL}, space will be set aside for a picket plot
+#' showing the row- and/or column annotation.
+#' @param leg.side An integer indicating on where to reserve space for the
+#' legend: values 1-4 correspond to below, to the left, above and to the right,
+#' as in e.g. \code{axis}. For a value of \code{NULL}, the function provides a
+#' reasonable default where there is space left in the layout. For any other
+#' value, no space for a legend is put aside.
+#' @param show A logical value; if \code{TRUE}, the layout defined by the
+#' arguments is displayed graphically.
+#' @return A list with the following entries: \item{plot }{A matrix describing
+#' the plot layout; see \code{layout}} \item{width }{relative widths of plots
+#' (i.e. columns)} \item{height }{relative heights of plots (i.e. rows)}
+#' \item{legend.side }{side where to draw the legend}
+#' @seealso \code{\link{annHeatmap2}}, \code{\link{picketPlot}},
+#' \code{\link{layout}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     ## Heatmap with column dendrogram, column annotation, default legend
+#'     dnd = list(Row=list(status="no"), Col=list(status="yes"))
+#'     ann = list(Row=list(data=NULL), Col=list(data=1))
+#'     ## 1 = heatmap, 2=dendrogram, 3=annotation, 4=legend
+#'     ll = heatmapLayout(dendrogram=dnd, annotation=ann, leg.side=NULL, show=TRUE)
+#'     ll
+#' 
+#' @export heatmapLayout
 heatmapLayout = function(dendrogram, annotation, leg.side=NULL, show=FALSE)
 {
     ## Start: maximum matrix, 5 x 5, all zero
@@ -103,6 +147,58 @@ heatmapLayout = function(dendrogram, annotation, leg.side=NULL, show=FALSE)
 ###################################################
 ### code chunk number 3: modifyExistingList_Def
 ###################################################
+
+#' Override existing list entries
+#' 
+#' Override existing list entries and extract arguments that are specified as
+#' named lists
+#' 
+#' \code{modifyExistingList} is a general function that recursively overwrites
+#' named items in \code{x} with the value of items of \code{val} with the same
+#' name. Items in \code{val} that have no name, or do not correspond to an item
+#' in \code{x} with the same name, are ignored.
+#' 
+#' \code{extractArg} is a specific helper function for setting default values
+#' for the \code{annHeatmap2}-family of functions, where arguments are given as
+#' a list with two named items, \code{Row} and \code{Col}. Each of these items
+#' is again a named list of actual parameters. At the same time, all items with
+#' other names than \code{Row} and \code{Col} at the top level are assumed to
+#' be shared items with the same value for both sub-lists. \code{extractArg}
+#' uses \code{modifyExistingList} to overwrite the default values specified in
+#' \code{deflist} with the actual values specified in \code{arglist}, see
+#' Examples.
+#' 
+#' @aliases modifyExistingList extractArg
+#' @param x a named list, the target for replacing with entries with the same
+#' name from \code{val}
+#' @param val a named list that serves as template for filling in values in
+#' \code{x}
+#' @param arglist a named list; these are the specified arguments that override
+#' the defaults.
+#' @param deflist a named list whose entries are all possible slots (with
+#' default values) that can be filled.
+#' @return \code{modifyExistingList} returns \code{x}, with values replaced
+#' from \code{val} where names match. \code{extractArg} returns a list with
+#' items \code{Row} and \code{Col} fully specified according to both
+#' \code{deflist} and \code{arglist}.
+#' @seealso \code{\link{annHeatmap2}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     ## Replace items with matching names recursively
+#'     x   = list(a=1, b=2, c=list(a=31, b=32), 135)
+#'     val = list(a=2, c=list(b=1114), d=92)
+#'     modifyExistingList(x, val)
+#'     
+#'     ## Same defaults for rows/columns, no arguments specified
+#'     defs = list(a="A", b="B", c="C")
+#'     extractArg(NULL, defs)
+#' 
+#'     ## Shared and non-shared defaults
+#'     defs = list(common.1=134, common.2=72, Row=list(row.only=14), Col=list(col.only=134))
+#'     args = list(common.1 = -1, Row=list(row.only=94, common.2=-15))
+#'     extractArg(args, defs)
+#' 
 modifyExistingList = function(x, val)
 {
     if (is.null(x)) x = list()
@@ -122,6 +218,8 @@ modifyExistingList = function(x, val)
 ###################################################
 ### code chunk number 4: extractArg_Def
 ###################################################
+
+#' @rdname modifyExistingList
 extractArg = function(arglist, deflist)
 {
     if (missing(arglist)) arglist = NULL
@@ -136,6 +234,77 @@ extractArg = function(arglist, deflist)
 ###################################################
 ### code chunk number 5: picketPlot_Def
 ###################################################
+
+
+#' Display a data frame of annotation information
+#' 
+#' Displays a data frame of both factor and numerical variables in parallel
+#' panels. Factors levels are indicated by black rectangles, using dummy
+#' variables for more than two levels. Numerical variables are shown as simple
+#' index plots with an optional loess smoother. Panels can be arranged
+#' horizontally or vertically, and different groups of subjects can be
+#' indicated through different background colors.
+#' 
+#' Missing values are indicated by a box marking in \code{nacol} for factor
+#' values.
+#' 
+#' @param x usually a data frame, which is passed to \code{convAnnData} to be
+#' converted to a numerical matrix with dummy coding for the factor levels.
+#' Alternatively, such a numerical matrix can be constructed manually and
+#' passed in as \code{x}, see argument \code{asIs}
+#' @param grp an optional vector of cluster memberships, in the same order as
+#' the rows of \code{x}
+#' @param grpcol an optional vector of background colors for the clusters
+#' specified in \code{grp}
+#' @param grplabel an optional vector of names for the clusters specified in
+#' \code{grp}
+#' @param horizontal logical value whether to plot variables horizontally
+#' (default) or vertically
+#' @param asIs a logical value indicating whether \code{x} should be passed to
+#' \code{convAnnData} for pre-processing or not. Defaults to \code{FALSE}.
+#' @param control a list of control parameters that determines the appearance
+#' of the plot \itemize{ \item\code{boxw} is the relative length of the short
+#' side of a box marking (width for a horizontal plot). Default is 1.
+#' \item\code{boxh} is the relative length of the long side of a box marking
+#' (default: 4) \item\code{hbuff} is the relative distance between two box
+#' markings for the same variable (horizontal buffer for a horizontal plot).
+#' Default is 0.1 \item\code{vbuff} is the relative distance between two box
+#' markings for the same subject, but different variables (default: 0.1)
+#' \item\code{cex.label} is the expansion factor for plotting cluster labels
+#' \item\code{numfac} is the expansion factor indicating how much higher (for a
+#' horizontal plot) or wider (for a vertical plot) panels with numerical
+#' variables are than panels for factor variables.  \item\code{nacol} is the
+#' color for box markings indicating missing values (default:
+#' \code{gray(0.85)}) \item\code{span} is the span argument for the loess
+#' smoother. Default is 1/3; setting this to zero switches off smoothing.
+#' \item\code{degree} is the degree of loess smoothing. Default is 1; setting
+#' this to zero switches off smoothing \item\code{pch} is the plotting
+#' character for numerical variables \item\code{cex.pch} is the size of the
+#' plotting character for numerical variables \item\code{col.pch} is the color
+#' of the plotting character for numerical variables }
+#' @return Depending on data and arguments, the value of the last \code{axis}
+#' function call. Irrelevant, as this function is called for its side effect of
+#' producing a plot.
+#' @seealso \code{\link{annHeatmap2}}, \code{\link{convAnnData}},
+#' \code{\link{par}}
+#' @keywords hplot
+#' @examples
+#' 
+#'     ## Standard call
+#'     data(mtcars)
+#'     picketPlot(mtcars)
+#'     
+#'     ## Pre-process the data for display
+#'     mm = convAnnData(mtcars, inclRef=FALSE)
+#'     picketPlot(mm, asIs=TRUE)
+#'     
+#'     ## Higher panels for continous traits
+#'     picketPlot(mm, asIs=TRUE, control=list(numfac=3))
+#'  
+#'     ## With clusters
+#'     picketPlot(mtcars, grp = rep(1:2, c(16, 16)), grpcol = c("pink","lightblue"), grplabel=c("Cluster 1", "Cluster 2"))
+#' 
+#' @export picketPlot
 picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs=FALSE, control=list()) 
 #
 # Name: picketPlot (looks like a picket fence with holes, and sounds like the
@@ -325,6 +494,47 @@ picketPlotControl = function()
 ###################################################
 ### code chunk number 7: findBreaks_Def
 ###################################################
+
+
+#' Get nice (symmetric) breaks for an interval
+#' 
+#' Given a minimum and a maximum, this function returns a vector of equidistant
+#' breaks that covers this interval, and has a pretty interval length (1, 2, or
+#' 5 times a power of 10). If the interval contains zero, it will be one of the
+#' breaks, so that the intervals are arranged somewhat symmetrically around it.
+#' 
+#' The number of desired breaks is honored as far as possible, which is not
+#' actually that often in practice. However, major deviations of three or more
+#' are reasonably rare.
+#' 
+#' The functiona allows the specification of a set of breaks instead of the
+#' desired number of breaks, somewhat like in \code{cut}. However, if the
+#' length of \code{breaks} is greater than one, the function just sorts the
+#' values and returns them otherwise unchanged.
+#' 
+#' @param xr the range to be covered, as \code{c(min, max)}
+#' @param breaks either the desired number of breaks, or a pre-specified vector
+#' of breaks
+#' @return A vector of pretty breaks covering the specified interval, more or
+#' less of the desired length.
+#' @seealso \code{\link{pretty}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     
+#'     ## Niceness overrules specified number
+#'     niceBreaks(c(-1,1), 5)
+#'     niceBreaks(c(-1,1), 6)
+#' 
+#'     ## Zero appears always as break
+#'     niceBreaks(c(-2.75, 1.12), 8)
+#' 
+#'     ## Not invariant to translation (of course)
+#'     niceBreaks(3.27 + c(-2.75, 1.12), 8)
+#' 
+#'     
+#' 
+#' @export niceBreaks
 niceBreaks = function(xr, breaks)
 {
     ## If you want it, you get it
@@ -356,6 +566,56 @@ niceBreaks = function(xr, breaks)
 ###################################################
 ### code chunk number 8: breakColors_Def
 ###################################################
+
+
+#' Color palette for (symmetric) breaks
+#' 
+#' Given a vector of breaks specifying a set of intervals, this function
+#' provides a vector of colors for the indicating the intervals graphically. If
+#' the intervals are arranged symmetrically around a specified value, the
+#' colors try to reflect this.
+#' 
+#' The meaning of symmetrical is rather generous here: it is enough that the
+#' intervals specified by \code{breaks} are of equal length and that
+#' \code{center} is one of the breaks. This means we allow for more or less
+#' intervals on one side of \code{center}.
+#' 
+#' This really only works well if \code{colors} is specified as
+#' \code{g2r.colors}, which returns a symmetrical color vector (from green to
+#' red) if an even number of colors is requested. The whole point is then that
+#' if there are more classes to one side of \code{center} than to the other,
+#' this will be reflected by deeper shades of red or green on the appropriate
+#' side.
+#' 
+#' @param breaks a vector of breaks
+#' @param colors either an explicit vector of colors, or a palette function
+#' that takes a number and returns a vector of colors
+#' @param center optional center around which to check for symmetry
+#' @param tol tolerance (as relative error) for deviation from mathematically
+#' exact symmetry
+#' @return A vector of colors, of length one less than the number of breaks.
+#' @seealso \code{\link{g2r.colors}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     ## Fully symmetrical breaks
+#'     br1 = (-3) : 3
+#'     co1 = breakColors(br1, g2r.colors)
+#'     co1
+#'     doLegend(br1, co1, 1)
+#'     
+#'     ## Truncated on one side
+#'     br2 = (-2) : 4
+#'     co2 = breakColors(br2, g2r.colors)
+#'     co2
+#'     doLegend(br2, co2, 1)
+#'     
+#'     ## Does not work with other color schemes
+#'     co3 = breakColors(br2, heat.colors)
+#'     co3
+#'     doLegend(br2, co3, 1)    
+#' 
+#' @export breakColors
 breakColors = function(breaks, colors, center=0, tol=0.001)
 {
     ## In case of explicit color definitions
@@ -397,6 +657,41 @@ breakColors = function(breaks, colors, center=0, tol=0.001)
 ###################################################
 ### code chunk number 9: g2r.colors_Def
 ###################################################
+
+
+#' Palette from green to red via black
+#' 
+#' Returns a color vector of the requested length, ranging from pure red to
+#' pure green via slighlty tinted black.
+#' 
+#' If \code{n} is even, the colors range from pure green to green-tinted black
+#' to red-tinted black to pure red. If \code{n} is odd, the colors range from
+#' pure red to pure green, with full black for the median class.
+#' 
+#' @param n the number of requested colors
+#' @param min.tinge the proportion of red/green added to black to make it
+#' recognizably green or red
+#' @return A vector of (RGB-) colors of the specified length
+#' @seealso \code{\link{breakColors}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     ## Even number: residual tint shows left/right of center
+#'     co_even = g2r.colors(10)
+#'     co_even
+#'     doLegend(1:11, co_even, 1)
+#'     
+#'     ## Odd number: central class all black
+#'     co_odd = g2r.colors(9)
+#'     co_odd
+#'     doLegend(1:10, co_odd, 1)
+#' 
+#'     ## Lighter tint in the middle
+#'     co_light = g2r.colors(10, min.tinge=0.50)
+#'     co_light
+#'     doLegend(1:11, co_light, 1)
+#' 
+#' @export g2r.colors
 g2r.colors = function(n=12, min.tinge = 0.33)
 {
     k <- trunc(n/2)
@@ -419,6 +714,32 @@ g2r.colors = function(n=12, min.tinge = 0.33)
 ###################################################
 ### code chunk number 10: doLegend_Def
 ###################################################
+
+
+#' A simple legend
+#' 
+#' Add a simple legend in form of a color bar to a plot.
+#' 
+#' This is an extremely simple way of giving a visual impression of what
+#' numerical values correspond to a given color. The actual plot is done via a
+#' call to \code{\link{image}} and \code{\link{axis}}.
+#' 
+#' @param breaks a vector of breaks defining a set of intervals for the data
+#' @param col a vector of colors corresponding to the intervals.
+#' @param side integer between 1 and 4, indicating on which side of the main
+#' plot the legend is supposed to be drawn. Standard interpretation: 1 = below,
+#' continuing clock-wise.
+#' @return The locations of the ticks returned by the call to
+#' \code{\link{axis}}
+#' @seealso \code{\link{plot.annHeatmap}}, \code{\link{niceBreaks}},
+#' \code{\link{g2r.colors}}
+#' @keywords utilities
+#' @examples
+#' 
+#'     ## Set up data
+#'     doLegend(1:9, g2r.colors(8), 2)
+#' 
+#' @export doLegend
 doLegend = function(breaks, col, side)
 {
     zval = ( breaks[-1] + breaks[-length(breaks)] ) / 2
@@ -435,6 +756,38 @@ doLegend = function(breaks, col, side)
 ###################################################
 ### code chunk number 11: convAnnData_Def
 ###################################################
+
+
+#' Converting data frames for display as annotation
+#' 
+#' Converts a data frames for display as annotation in a heatmap. This is
+#' mostly intended as an internal function, but might be useful for finetuning
+#' an annotation data frame manually.
+#' 
+#' Logical variables are converted to factors. So are numerical variables with
+#' less than \code{nval.fac} unique values.
+#' 
+#' @param x the data frame to be converted
+#' @param nval.fac lower limit for unique values in numerical variables
+#' @param inclRef logical value indicating whether to include the reference
+#' level among the dummy variables for factors
+#' @param asIs logical value indicating whether to perform a conversion; if
+#' \code{TRUE}, the input \code{x} is simply returned, provided it is a
+#' numerical matrix (otherwise, the function stops with an error message)
+#' @return \code{convAnnData} returns the converted data frame, which is a
+#' numerical matrix
+#' @seealso \code{\link{annHeatmap2}}
+#' @keywords utilities
+#' @examples
+#' 
+#' data(mtcars)
+#' summary(mtcars)
+#' summary(convAnnData(mtcars))
+#' summary(convAnnData(mtcars, nval.fac=2))    
+#' summary(convAnnData(mtcars, nval.fac=2, inclRef=FALSE))    
+#' 
+#' 
+#' @export convAnnData
 convAnnData = function(x, nval.fac=3, inclRef=TRUE, asIs=FALSE)
 {
     if (is.null(x)) return(NULL)
@@ -527,6 +880,30 @@ getLeaves = function(x)
 ###################################################
 ### code chunk number 14: print.annHeatmap_Def
 ###################################################
+
+
+#' Printing information about annotated heatmaps
+#' 
+#' Printing method for annotated heatmaps
+#' 
+#' A very simple printing method, displaying a minimum of information about
+#' dendrograms and annotation
+#' 
+#' @param x an object of class \code{annHeatmap}
+#' @param \dots extra arguments, currently ignored
+#' @return \code{x} is returned invisibly
+#' @seealso \code{\link{annHeatmap}}, \code{\link{annHeatmap2}},
+#' \code{\link{plot.annHeatmap}}
+#' @keywords hplot
+#' @examples
+#' 
+#'     set.seed(219)
+#'     mat = matrix(rnorm(100), ncol=5)
+#'     ann = data.frame(Class=c("A","A","B","A","B"))
+#'     map1 = annHeatmap(mat, ann)
+#'     map1
+#' 
+#' @export print.annHeatmap
 print.annHeatmap = function(x, ...)
 {
     cat("annotated Heatmap\n\n")
@@ -541,6 +918,44 @@ print.annHeatmap = function(x, ...)
 ###################################################
 ### code chunk number 15: BrewerClusterCol_Def
 ###################################################
+
+
+#' Color scheme for clusters
+#' 
+#' This function returns a color vector based on one of the qualitative
+#' paletters supported by \code{RColorBrewer}. This allows visually distinct
+#' coloring of clusters and ensures sure that adjacent clusters have different
+#' colors.
+#' 
+#' This is just a wrapper for \code{\link{brewer.pal}} that checks that the
+#' specified palette is qualitative, and allows for an arbitrary number of
+#' colors: for less than three colors, it just returns the first and second
+#' colors of the palette; for more than \code{maxcolors} colors, it recycles
+#' the basic palette as often as required. This is ok, because the main point
+#' is to have different colors for neighboring clusters.
+#' 
+#' @param n desired number of colors
+#' @param name name of the qualitative palette from which colors are taken, see
+#' \code{\link{brewer.pal.info}}
+#' @return A character vector of length \code{n} of hexadecimal color codes.
+#' @seealso \code{\link{brewer.pal}}
+#' @keywords color
+#' @examples
+#' 
+#' ## A Color Wheel: default palette with maximum number of colors
+#' pie(rep(1,9), col=BrewerClusterCol(9))
+#' 
+#' ## Double the number of colors 
+#' pie(rep(1,18), col=BrewerClusterCol(18))
+#' 
+#' ## Only two clusters/colors
+#' pie(rep(1,2), col=BrewerClusterCol(2))
+#' 
+#' ## Different qualitative palette: stronger colors
+#' pie(rep(1,12), col=BrewerClusterCol(12, "Paired"))
+#' 
+#' 
+#' @export BrewerClusterCol
 BrewerClusterCol = function(n, name="Pastel1")
 {
     ## Check the name of the palette
@@ -646,6 +1061,121 @@ cutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3
 ###################################################
 ### code chunk number 18: annHeatmap2_Def
 ###################################################
+
+
+#' Annotated heatmaps
+#' 
+#' This function plots a data matrix as intensity heatmap, with optional
+#' dendrograms, annotation panels and clustering for both rows and columns.
+#' This is the actual working function called by numerous wrappers.
+#' 
+#' Arguments \code{scale}, \code{breaks}, \code{col} and \code{legend} control
+#' different aspects of the whole plot directly as described. Arguments
+#' \code{dendrogram}, \code{annotation}, \code{cluster} and \code{labels}
+#' control aspects that may differ for the rows and columns of the central
+#' heatmap and have a special structure: each is a named list with different
+#' entries controling e.g. the look of a dendrogram, the data for annotation
+#' etc. Additionally, they can contain two extra entries called simply
+#' \code{Row} and \code{Col}; these are again named lists that can contain all
+#' the same entries as the parent list. Entries specified directly in the list
+#' apply to both rows and columns; entries specified as part of \code{Row} or
+#' \code{Col} override these defaults for the rows or columns only.
+#' 
+#' Recognized parameters for argument \code{dendrogram}: \describe{
+#' \item{clustfun}{the clustering function for generating the dendrogram;
+#' defaults to \code{hclust} for rows and columns} \item{distfun}{a function
+#' that returns the pairwise distances between samples/features as an object of
+#' class \code{dist}; defaults to \code{dist} for rows and columns}
+#' \item{status}{a string that controls the display of the dendrogram:
+#' \code{yes} means use the dendrogram to re-order the rows/columns and display
+#' the dendrogram; \code{hidden} means re-rorder, but do not display; \code{no}
+#' means do not use the dendrogram at all.} \item{lwd}{the line width of the
+#' branches of the dendrogram; defaults to 3.} \item{dendro}{an override
+#' argument that allows to pass in a dendrogram directly, bypassing the
+#' \code{clustfun} and \code{distfun} mechanism; defaults to \code{NULL} (i.e.
+#' is not used)} }
+#' 
+#' Recognized entries for argument \code{annotation}: \describe{ \item{data}{a
+#' data frame containing the annotation data; defaults to \code{NULL}, i.e. no
+#' annotation is displayed} \item{control}{a list of fine-tuning parameters
+#' that is passed directly to \code{picketPlot}; defaults to an empty list,
+#' i.e. the default settings in \code{picketPlot}} \item{asIs}{logical value
+#' indicating whether the annotation \code{data} needs to be pre-processed via
+#' \code{convAnnData} or not; defaults to \code{TRUE}} \item{inclRef}{logical
+#' value indicating whether to include all levels of factor variables in
+#' \code{data}, or whether to drop the reference level (i.e. the first level).
+#' Defaults to \code{TRUE}} }
+#' 
+#' Recognized entries for argument \code{cluster}: \describe{ \item{cuth}{the
+#' height at which to cut through the dendrogram to define groups of similar
+#' features/samples; defaults to \code{NULL}, i.e. no cutting}
+#' \item{label}{labels for the clusters; defaults to \code{NULL}, i.e. no
+#' labels} \item{col}{colors for the different clusters; the colors are used
+#' for coloring both the sub-trees of the dendrogram and the corresponding area
+#' in the annotation plot (if there is one). This is either a vector of colors,
+#' or a palette function that takes a number and returns a vector of colors of
+#' the specified length; defaults to \code{RainbowPastel}} \item{grp}{an
+#' override argument that directly specifies group memberships for the
+#' features/samples, completely bypassing the whole \code{dendrogram} and
+#' \code{cuth} mechanism. This probably only works for
+#' \code{dendrogram$status="no"}.} }
+#' 
+#' Recognized entries for argument \code{labels}: \describe{ \item{cex}{size of
+#' the text for the labels; defaults to \code{NULL}, i.e. use a hard-coded
+#' default guess} \item{nrow}{amount of space available for the labels between
+#' the central heatmap and the dendrogram, expressed as lines of text; defaults
+#' to 3.} \item{side}{side at which to draw the labels, coded as integer
+#' between 1 and 4 in the usual way (1 = below the plot, continuing clockwise).
+#' A common default for rows and columns does not make sense: rows only work
+#' with 2 and 4, columns only with 1 and 3. Defaults try to make use of empty
+#' space, depending on the presence of a dendrogram.} \item{labels}{labels for
+#' rows and columns; defaults to \code{NULL}, i.e. using the row- and column
+#' names of \code{x}. Note that these labels are applied \emph{after}
+#' re-sorting rows and columns as per dendrogram, so these have to be already
+#' sorted accordingly. If you want to change the labels \emph{before}
+#' re-sorting, it is is easier to re-set the row- and/or column names of
+#' \code{x}.} }
+#' 
+#' @param x the numerical matrix to be shown as heatmap
+#' @param dendrogram a list that controls how row- and column diagrams are
+#' determined and displayed
+#' @param annotation a list that controls the data and the way it is shown in
+#' row- and column annotation panels
+#' @param cluster a list that controls how many clusters are chosen, and how
+#' these clusters are labelled and colored
+#' @param labels a list that controls the row- and column labels, as well as
+#' their size and placement
+#' @param scale a character string indicating how the matrix \code{x} is
+#' standardized (by row, by column or not at all). This affects only display,
+#' not dendrograms or clustering
+#' @param breaks specifies the interval breaks for displaying the data in
+#' \code{x}; either a vector of explicit interval breaks, or just the desired
+#' number of intervals. See \code{niceBreaks} for details.
+#' @param col specifies a palette of colors for the heatmap intensities; either
+#' a vector of explicit color definitions (one less than breaks) or a palette
+#' function. See \code{breakColors}.
+#' @param legend whether and where to draw a legend for the colors/intervals in
+#' the heatmap. If \code{TRUE}, a legend is placed in a position determined by
+#' the function to be suitable; alternatively, integer values 1-4 indicate the
+#' side where the legend is to be drawn; and \code{FALSE} indicates that no
+#' legend should be drawn.
+#' @return An object of class \code{annHeatmap}. Use \code{plot} to display it
+#' graphically. %% ~Describe the value returned %% If it is a LIST, use %%
+#' \item{comp1 }{Description of 'comp1'} %% \item{comp2 }{Description of
+#' 'comp2'} %% ...
+#' @seealso \code{\link{heatmapLayout}}, \code{\link{niceBreaks}},
+#' \code{\link{breakColors}}, \code{\link{g2r.colors}}
+#' @keywords hplot
+#' @examples
+#' 
+#' require(Biobase)
+#' data(sample.ExpressionSet)
+#' ex1 = sample.ExpressionSet[51:85,]
+#' map1 = annHeatmap2(exprs(ex1), ann=list(Col=list(data=pData(ex1))),
+#'                    cluster=list(Col=list(cuth=3000)))
+#' plot(map1)
+#' 
+#' @export annHeatmap2
 annHeatmap2 = function(x, dendrogram, annotation, cluster, labels, scale=c("row", "col", "none"), breaks=256, col=g2r.colors, legend=FALSE)
 #
 # Name: annHeatmap2
@@ -767,6 +1297,50 @@ annHeatmap2 = function(x, dendrogram, annotation, cluster, labels, scale=c("row"
 ###################################################
 ### code chunk number 19: plot.annHeatmap_Def
 ###################################################
+
+
+#' Plotting method for annotated heatmaps
+#' 
+#' Plotting method for annotated heatmaps
+#' 
+#' This function displays an annotated heatmap object that has been previously
+#' generated by \code{annHeatmap2} or on of its wrappers. The arguments
+#' \code{widths} and \code{heights} work as in \code{layout}.
+#' 
+#' @param x an object of class \code{annHeatmap}
+#' @param widths a numerical vector giving the widths of the sub-plots
+#' currently defined
+#' @param heights a numerical vector giving the heights of the sub-plots
+#' currently defined
+#' @param \dots extra graphical parameters, currently ignored
+#' @return \code{x}, invisibly returned. If \code{widths} or \code{heights}
+#' have been specified, they overwrite the corresponding items
+#' \code{x$layout$width} and \code{x$layout$height} in \code{x}.
+#' @seealso \code{\link{annHeatmap2}}, \code{\link{heatmapLayout}},
+#' \code{\link{layout}}
+#' @keywords hplot
+#' @examples
+#' 
+#'     ## Define the map
+#'     require(Biobase)
+#'     data(sample.ExpressionSet)
+#'     ex1 = sample.ExpressionSet[51:85,]
+#'     map1 = annHeatmap2(exprs(ex1), ann=list(Col=list(data=pData(ex1))),
+#'                    cluster=list(Col=list(cuth=3000)))
+#'     
+#'     ## Plot it               
+#'     plot(map1)
+#'     
+#'     ## More heatmap, smaller dendrogram/annotation
+#'     map2 = plot(map1, heights = c(1,6,1))
+#'     
+#'     ## Compare layout before/after
+#'     with(map1$layout, layout(plot, width, height))
+#'     layout.show(4)
+#'     with(map2$layout, layout(plot, width, height))
+#'     layout.show(4)
+#' 
+#' @export plot.annHeatmap
 plot.annHeatmap = function(x, widths, heights, ...)
 {
 	## Preserve parameters that are set explicitly below
@@ -846,7 +1420,95 @@ plot.annHeatmap = function(x, widths, heights, ...)
 ###################################################
 ### code chunk number 20: Generics_Def
 ###################################################
+
+
+#' Regular heatmaps with a legend
+#' 
+#' Creating regular heatmaps, without annotation, but allowing for a legend
+#' 
+#' A gelded wrapper for \code{annHeatmap2} that allows for heatmaps without
+#' annotation or clustering on the dendrograms, but still offer some control
+#' over dendrograms, labels and legend.
+#' 
+#' These functions generate an object representing the heatmap; in order to
+#' produce graphical output, you have to invoke the \code{plot} method, see
+#' Examples.
+#' 
+#' @aliases regHeatmap regHeatmap.default
+#' @param x a numerical matrix
+#' @param dendrogram a list controlling the options for row- and column
+#' dendrogram, see \code{annHeatmap2}
+#' @param labels a list controlling the row- and column labels as well as their
+#' location and size, see \code{annHeatmap2}
+#' @param legend either a logical value, indicating whether to draw a legend at
+#' the default location determined by the function, or one of the sides of the
+#' plot (1-4), see \code{annHeatmap2}
+#' @param \dots extra options passed to \code{annHeatmap2}
+#' @return An object of class \code{annHeatmap}
+#' @seealso \code{\link{annHeatmap}}, \code{\link{annHeatmap2}},
+#' \code{\link{plot.annHeatmap}}
+#' @keywords hplot
+#' @examples
+#' 
+#'     
+#'     ## Default
+#'     set.seed(219)
+#'     mat = matrix(rnorm(100), ncol=5)
+#'     map1 = regHeatmap(mat)
+#'     plot(map1)
+#'   
+#' 
+#' @export regHeatmap
 regHeatmap = function(x, ...) UseMethod("regHeatmap")
+
+
+#' Annotated heatmaps
+#' 
+#' Creating heatmaps with annotated columns
+#' 
+#' These functions generate an object representing the heatmap; in order to
+#' produce graphical output, you have to invoke the \code{plot} method, see
+#' Examples.
+#' 
+#' @aliases annHeatmap annHeatmap.default annHeatmap.ExpressionSet
+#' @param x either a numerical matrix with the data for the central heatmap
+#' (for the default method) or an object of class \code{ExpressionSet}
+#' @param annotation a data frame containing the annotation for the columns of
+#' \code{x}
+#' @param dendrogram a list controlling the options for row- and column
+#' dendrogram, see \code{annHeatmap2}
+#' @param cluster a list controlling the options for clustering rows and
+#' columns of \code{x}, see \code{annHeatmap2}
+#' @param labels a list controlling the row- and column labels as well as their
+#' location and size, see \code{annHeatmap2}
+#' @param legend either a logical value, indicating whether to draw a legend at
+#' the default location determined by the function, or one of the sides of the
+#' plot (1-4), see \code{annHeatmap2}
+#' @param \dots extra options passed to \code{annHeatmap2}
+#' @return An object of class \code{annHeatmap}
+#' @section Warning: These are currently simple convenience functions that
+#' allow quick plotting, but little control over the finer details. This may
+#' change in the future, but for now, if you want to do anything fancy, you
+#' should invoke \code{annHeatmap2} directly.
+#' @seealso \code{\link{annHeatmap2}}, \code{\link{plot.annHeatmap}}
+#' @keywords hplot
+#' @examples
+#' 
+#' 
+#'     ## Default method
+#'     set.seed(219)
+#'     mat = matrix(rnorm(100), ncol=5)
+#'     ann = data.frame(Class=c("A","A","B","A","B"))
+#'     map1 = annHeatmap(mat, ann)
+#'     plot(map1)
+#'     
+#'     ## Expression set
+#'     require(Biobase)
+#'     data(sample.ExpressionSet)
+#'     map2 = annHeatmap(sample.ExpressionSet)
+#'     plot(map2)
+#' 
+#' @export annHeatmap
 annHeatmap = function(x, ...) UseMethod("annHeatmap")
 
 
