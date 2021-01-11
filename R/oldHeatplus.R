@@ -14,8 +14,7 @@
 #' more flexibility (e.g. skipping dendrograms, skipping row/column labelling,
 #' adding a legend).
 #' 
-#' This function is just about to be deprecated. Please use \code{regHeatmap}
-#' for new projects.
+#' This function is deprecated. Please use \code{regHeatmap} for new projects.
 #' 
 #' With all parameters at their default, this gives the same result as a very
 #' old version of \code{heatmap} that was the base for the modifications. All
@@ -121,6 +120,8 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
 #       060602 AP Rowv/Colv=NA suppresses re-ordering completely,
 #                 margins are now wider if no dendro is plotted
 {
+    .Deprecated("regHeatmap")
+    
     # scaling & clustering, unchanged
     scale <- match.arg(scale)
     if (length(di <- dim(x)) != 2 || !is.numeric(x)) 
@@ -289,8 +290,8 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
 #' number of binary and interval scaled covariates can be added to characterize
 #' these clusters.
 #' 
-#' This function is just about to be deprecated. Please use functions
-#' \code{annHeatmap} or \code{annHeatmap2} for new projects.
+#' This function is deprecated. Please use functions \code{annHeatmap} or 
+#' \code{annHeatmap2} for new projects.
 #' 
 #' This is a heavily modified version of \code{heatmap_2}, which is a heavily
 #' modfied version of an old version of \code{heatmap} in package \code{stats},
@@ -416,6 +417,8 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
 #       060303 AP changed name
 #
 {
+    .Deprecated("annHeatmap")
+    
     # initial check up
     scale <- match.arg(scale)
     if (length(di <- dim(x)) != 2 || !is.numeric(x)) 
@@ -597,6 +600,8 @@ oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lw
 #       100811 AP name change to avoid collisions
 #
 {
+    .Deprecated("cutplot.dendrogram")
+    
     if (missing(h)) {
         return(plot(x, leaflab=leaflab, ...))
     }
@@ -710,6 +715,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
 #       108011 AP name change to avoid collisions
 #
 {
+    .Deprecated("picketPlot")
     
     # deal with the setup
     cc = list(boxw=1, boxh=4, hbuff=0.1, vbuff=0.1, span=1/3, nacol=gray(0.85), 
@@ -891,6 +897,7 @@ RGBColVec = function (nrgcols=12)
 #
 # Chng:
 #
+    .Deprecated("g2r.colors")
 
     k <- trunc(nrgcols/2)
     if (2*k == nrgcols) {   # the even case
@@ -918,6 +925,9 @@ RainbowPastel =  function (n, blanche=200, ...)
     #
     
 {
+    
+    .Deprecated("BrewerClusterCol")
+    
     cv = rainbow(n, ...)
     rgbcv = col2rgb(cv)
     rgbcv = pmin(rgbcv+blanche, 255)

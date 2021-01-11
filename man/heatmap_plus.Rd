@@ -94,8 +94,8 @@ number of binary and interval scaled covariates can be added to characterize
 these clusters.
 }
 \details{
-This function is just about to be deprecated. Please use functions
-\code{annHeatmap} or \code{annHeatmap2} for new projects.
+This function is deprecated. Please use functions \code{annHeatmap} or 
+\code{annHeatmap2} for new projects.
 
 This is a heavily modified version of \code{heatmap_2}, which is a heavily
 modfied version of an old version of \code{heatmap} in package \code{stats},

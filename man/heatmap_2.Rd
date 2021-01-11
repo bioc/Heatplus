@@ -72,8 +72,7 @@ more flexibility (e.g. skipping dendrograms, skipping row/column labelling,
 adding a legend).
 }
 \details{
-This function is just about to be deprecated. Please use \code{regHeatmap}
-for new projects.
+This function is deprecated. Please use \code{regHeatmap} for new projects.
 
 With all parameters at their default, this gives the same result as a very
 old version of \code{heatmap} that was the base for the modifications. All
