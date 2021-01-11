@@ -5,6 +5,105 @@
 ##
 ## 2011-08-11   Alexander.Ploner@ki.se
 
+
+#' Display Data as Heatmap
+#' 
+#' This function displays an expression data matrix as a heatmap. It is based
+#' on an old version of \code{heatmap} in the \code{stats} package, but offers
+#' more flexibility (e.g. skipping dendrograms, skipping row/column labelling,
+#' adding a legend).
+#' 
+#' This function is deprecated. Please use \code{regHeatmap} for new projects.
+#' 
+#' With all parameters at their default, this gives the same result as a very
+#' old version of \code{heatmap} that was the base for the modifications. All
+#' parameters of the same name have the same function as in \code{heatmap},
+#' though \code{add.expr}, which can be used for adding graphical elements
+#' after the call to \code{image}, will probably not produce useful results.
+#' Note also that row- and column labels are optional, i.e. if the
+#' corresponding \code{dimname} of \code{x} is \code{NULL}, no labels are
+#' displayed.
+#' 
+#' Note that setting \code{Rowv} or \code{Colv} to \code{NA} completely
+#' suppresses re-ordering of rows or columns as well as the corresponding
+#' dendrogram. Setting both to \code{NA} works basically like \code{image}
+#' (though you can still add a legend).
+#' 
+#' Setting \code{trim} to a number between 0 and 1 uses equidistant classes
+#' between the (\code{trim})- and (1-\code{trim})-quantile, and lumps the
+#' values below and above this range into separate open-ended classes. If the
+#' data comes from a heavy-tailed distribution, this can save the display from
+#' putting too many values into to few classes.
+#' 
+#' @param x the numerical data matrix to be displayed.
+#' @param Rowv either a dendrogram or a vector of reordering indexes for the
+#' rows.
+#' @param Colv either a dendrogram or a vector of reordering indexes for the
+#' columns.
+#' @param distfun function to compute the distances between rows and columns.
+#' Defaults to \code{dist}.
+#' @param hclustfun function used to cluster rows and columns. Defaults to
+#' \code{hclust}.
+#' @param add.expr Expression to be evaluated after the call to \code{image}.
+#' See Details.
+#' @param scale indicates whether values should be scaled by either by row,
+#' column, or not at all. Defaults to \code{row}.
+#' @param na.rm logical indicating whther to remove NAs.
+#' @param do.dendro logical vector of length two, indicating (in this order)
+#' whether to draw the row and column dendrograms.
+#' @param legend integer between 1 and 4, indicating on which side of the plot
+#' the legend should be drawn, as in \code{mtext}.
+#' @param legfrac fraction of the plot that is taken up by the legend; larger
+#' values correspond to smaller legends.
+#' @param col the color scheme for \code{image}. The default sucks.
+#' @param trim Percentage of values to be trimmed. This helps to keep an
+#' informative color scale, see Details.
+#' @param \dots extra arguments to \code{image}.
+#' @return Same as \code{heatmap} with \code{keep.dendro=FALSE}: an invisible
+#' list giving the reordered indices of the row- and column-elements as
+#' elements \code{rowInd} and \code{colInd}.
+#' @author Original by Andy Liaw, with revisions by Robert Gentleman and Martin
+#' Maechler.
+#' 
+#' Alexander Ploner for this version.
+#' @seealso \code{\link{heatmap}}, \code{\link{hclust}},
+#' \code{\link{heatmap_plus}}, \code{\link{regHeatmap}},
+#' \code{\link{annHeatmap}}
+#' @keywords hplot
+#' @examples
+#' \dontrun{
+#' # create data
+#' mm = matrix(rnorm(1000, m=1), 100,10)
+#' mm = cbind(mm, matrix(rnorm(2000), 100, 20))
+#' mm = cbind(mm, matrix(rnorm(1500, m=-1), 100, 15))
+#' mm2 = matrix(rnorm(450), 30, 15)
+#' mm2 = cbind(mm2, matrix(rnorm(900,m=1.5), 30,30))
+#' mm=rbind(mm, mm2)
+#' colnames(mm) = paste("Sample", 1:45)
+#' rownames(mm) = paste("Gene", 1:130)
+#' 
+#' # similar to base heatmap
+#' heatmap_2(mm)
+#' 
+#' # remove column dendrogram
+#' heatmap_2(mm, do.dendro=c(TRUE, FALSE))
+#' 
+#' # add a legend under the plot
+#' heatmap_2(mm, legend=1)
+#' # make it smaller
+#' heatmap_2(mm, legend=1, legfrac=10)
+#' # ... on the left side
+#' heatmap_2(mm, legend=2, legfrac=10)
+#' 
+#' # remove the column labels by removing the column names
+#' colnames(mm)=NULL
+#' heatmap_2(mm, legend=1, legfrac=10)
+#' 
+#' # truncate the data drastically
+#' heatmap_2(mm, legend=1, legfrac=10, trim=0.1)
+#' } ## end dontrun
+#' 
+#' @export heatmap_2
 heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust, 
                       add.expr, scale = c("row", "column", "none"), na.rm = TRUE, 
                       do.dendro=c(TRUE,TRUE), legend=0, legfrac=8, 
@@ -21,6 +120,8 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
 #       060602 AP Rowv/Colv=NA suppresses re-ordering completely,
 #                 margins are now wider if no dendro is plotted
 {
+    .Deprecated("regHeatmap")
+    
     # scaling & clustering, unchanged
     scale <- match.arg(scale)
     if (length(di <- dim(x)) != 2 || !is.numeric(x)) 
@@ -132,7 +233,7 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
         }
     }
     # now go
-    layout(ll, width=ll.width, height=ll.height, respect=TRUE)            
+    layout(ll, widths=ll.width, heights=ll.height, respect=TRUE)            
     # the actual plot            
     par(mar=margin)
     image(1:ncol(x), 1:nrow(x), t(x), axes = FALSE, xlim = c(0.5, 
@@ -180,6 +281,120 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
     invisible(list(rowInd = rowInd, colInd = colInd))
 }
 
+
+#' Display an Annotated Heatmap
+#' 
+#' This function displays an expression data matrix as a heatmap with a column
+#' dendrogram. A given clustering will be shown in color.  Additionally, a
+#' number of binary and interval scaled covariates can be added to characterize
+#' these clusters.
+#' 
+#' This function is deprecated. Please use functions \code{annHeatmap} or 
+#' \code{annHeatmap2} for new projects.
+#' 
+#' This is a heavily modified version of \code{heatmap_2}, which is a heavily
+#' modfied version of an old version of \code{heatmap} in package \code{stats},
+#' so some of the arguments are described in more detail there. The main
+#' distinguishing feature of this routine is the possibility to color a cluster
+#' solution, and to add a covariate display.
+#' 
+#' Covariates are assumed to be binary, coded as 0 and 1 (or \code{FALSE} and
+#' \code{TRUE} respectively). One of the covariates can be interval scaled, the
+#' column index of this variable is supplied via argument \code{covariate}. The
+#' details of the added display are handled by the function \code{picketplot}.
+#' 
+#' Setting \code{trim} to a number between 0 and 1 uses equidistant classes
+#' between the (\code{trim})- and (1-\code{trim})-quantile, and lumps the
+#' values below and above this range into separate open-ended classes. If the
+#' data comes from a heavy-tailed distribution, this can save the display from
+#' putting too many values into to few classes. Alternatively, you can set
+#' \code{equal=TRUE}, which uses an equidistant color scheme for the ranks of
+#' the values.
+#' 
+#' @param x the numerical data matrix to be displayed.
+#' @param addvar data frame with (mostly binary) covariates.
+#' @param covariate integer indicating the one column in \code{addvar} that is
+#' interval scaled.
+#' @param picket.control list of option for drawing the covariates, passed to
+#' \code{oldPicketplot}.
+#' @param h height at which to cut the dendrogram, as in \code{oldCutree};
+#' overrides \code{clus}.
+#' @param clus an explicit vector of cluster memberships for the columns of
+#' \code{x}, if no dendrogram is used; ignored if \code{do.dendro=TRUE} and
+#' \code{h} is specified.
+#' @param cluscol a vector of colors used to indicate clusters.
+#' @param cluslabel labels to designate cluster names.
+#' @param Rowv either a dendrogram or a vector of reordering indexes for the
+#' rows.
+#' @param Colv either a dendrogram or a vector of reordering indexes for the
+#' columns.
+#' @param reorder logical vector of length two, indicating whether the rows and
+#' columns (in this order) should be reordered using \code{order.dendrogram}.
+#' @param distfun function to compute the distances between rows and columns.
+#' Defaults to \code{dist}.
+#' @param hclustfun function used to cluster rows and columns. Defaults to
+#' \code{hclust}.
+#' @param scale indicates whether values should be scaled by either by row,
+#' column, or not at all. Defaults to \code{row}.
+#' @param na.rm logical indicating whther to remove NAs.
+#' @param do.dendro logical indicating whether to draw the column dendrogram.
+#' @param col the color scheme for \code{image}. The default sucks.
+#' @param trim Percentage of values to be trimmed. This helps to keep an
+#' informative color scale, see Details.
+#' @param equalize logical indicating whther to use the ranks of the data for
+#' setting the color scheme; alternative to \code{trim}, see Details.
+#' @param \dots extra arguments to \code{image}.
+#' @return A list with components \item{rowInd}{indices of the rows of the
+#' display in terms of the rows of \code{x}.} \item{colInd}{ditto for the
+#' columns of the display.} \item{clus}{the cluster indices of the columns of
+#' the display.}
+#' @author Original by Andy Liaw, with revisions by Robert Gentleman and Martin
+#' Maechler.
+#' 
+#' Alexander Ploner for the modifications documented here.
+#' @seealso \code{\link{heatmap_2}}, \code{\link{heatmap}},
+#' \code{\link{oldPicketplot}}, \code{\link{oldCutplot.dendrogram}},
+#' \code{\link{RGBColVec}}, \code{\link{annHeatmap}}, \code{\link{annHeatmap2}}
+#' @keywords hplot
+#' @examples
+#'\dontrun{ 
+#' # create data
+#' mm = matrix(rnorm(1000, m=1), 100,10)
+#' mm = cbind(mm, matrix(rnorm(2000), 100, 20))
+#' mm = cbind(mm, matrix(rnorm(1500, m=-1), 100, 15))
+#' mm2 = matrix(rnorm(450), 30, 15)
+#' mm2 = cbind(mm2, matrix(rnorm(900,m=1.5), 30,30))
+#' mm=rbind(mm, mm2)
+#' colnames(mm) = paste("Sample", 1:45)
+#' rownames(mm) = paste("Gene", 1:130)
+#' addvar = data.frame(Var1=rep(c(0,1,0),c(10,20,15)),
+#'                     Var2=rep(c(1,0,0),c(10,20,15)),
+#'                     Var3=rep(c(1,0), c(15,30)),
+#'                     Var4=rep(seq(0,1,length=4), c(10,5,15,15))+rnorm(45, sd=0.5))
+#' addvar[3,3] = addvar[17,2] = addvar[34,1] =NA
+#' colnames(addvar) = c("Variable X","Variable Y", "ZZ","Interval")
+#' 
+#' 
+#' # the lame default, without clustering
+#' # Labels do not look too hot that way
+#' heatmap_plus(mm)
+#' 
+#' # without labels, but with cluster
+#' dimnames(mm)=NULL
+#' heatmap_plus(mm, h=40)
+#' 
+#' # add some covariates, with nice names
+#' heatmap_plus(mm, addvar=addvar, cov=4)
+#' 
+#' # covariates and clustering
+#' heatmap_plus(mm, addvar=addvar, cov=4, h=20, col=RGBColVec(64), equal=TRUE)
+#' 
+#' # Clustering without the dendrogram
+#' cc = cutree(hclust(dist(t(mm))), k=5)
+#' heatmap_plus(mm, addvar=addvar, cov=4, clus=cc, do.dendro=FALSE)
+#' } ## end dontrun
+#' 
+#' @export heatmap_plus
 heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
                          h, clus, cluscol, cluslabel=NULL, Rowv, Colv, 
                          reorder=c(TRUE, TRUE), distfun = dist, hclustfun = hclust, 
@@ -202,6 +417,8 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
 #       060303 AP changed name
 #
 {
+    .Deprecated("annHeatmap")
+    
     # initial check up
     scale <- match.arg(scale)
     if (length(di <- dim(x)) != 2 || !is.numeric(x)) 
@@ -297,7 +514,7 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
         ll.height = c(ll.height, 1, 1)
     }
     # now go
-    layout(ll, width=ll.width, height=ll.height, respect=TRUE)            
+    layout(ll, widths=ll.width, heights=ll.height, respect=TRUE)            
     # fill in from the top, starting with the dendrogram
     mm = c(0,1,3,2)
     par(mar = mm)            
@@ -336,6 +553,36 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
     invisible(list(rowInd = rowInd, colInd = colInd, clus=grp))
 }
 
+
+
+#' Plot Subtrees of a Dendrogram in Different Colors
+#' 
+#' Plot a dendrogram, cut the tree at a given height, and draw the resulting
+#' subtrees in different colors (OLD version, to be deprecated)
+#' 
+#' This routine makes use of the functions \code{plot.dendrogram} and
+#' \code{plotNode} in package \code{stats}.
+#' 
+#' @param x a dendrogram.
+#' @param h the height at which the dendrogram is cut.
+#' @param cluscol the colors used for the subtrees; defaults to \code{rainbow}.
+#' @param leaflab indicates how leaf labels are to be drawn< defaults to
+#' 'perpendicular'.
+#' @param horiz logical indicating whether to plot the dendrogram horizontally
+#' or vertically.
+#' @param lwd the line width used for the color subtrees.
+#' @param \dots arguments to \code{plot.dendrogram}.
+#' @author Alexander Ploner <Alexander.Ploner@@ki.se>
+#' @seealso \code{\link{as.dendrogram}}
+#' @keywords hplot aplot cluster
+#' @examples
+#' \dontrun{
+#' data(swiss)
+#' cc = as.dendrogram(hclust(dist(swiss)))
+#' oldCutplot.dendrogram(cc, h=80)
+#' } 
+#' 
+#' @export oldCutplot.dendrogram
 oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3, 
                               ...)
 #
@@ -354,6 +601,8 @@ oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lw
 #       100811 AP name change to avoid collisions
 #
 {
+    .Deprecated("cutplot.dendrogram")
+    
     if (missing(h)) {
         return(plot(x, leaflab=leaflab, ...))
     }
@@ -385,6 +634,69 @@ oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lw
     
 }
 
+
+
+#' Barplots for Several Binary Variables
+#' 
+#' Display one or more binary variables by using black bars for
+#' presence/validity of a condition, empty space for absence/invalidity, and an
+#' extra color for missing values. Additionally, an index plot for one interval
+#' scaled variable can be added, possibly with a smoothing function (OLD
+#' version, to be deprecated).
+#' 
+#' This routine is primarily intended for augmenting heatmaps. It might be
+#' useful in other contexts, but misses most frills for using it comfortably.
+#' 
+#' The following named list elements can be set to change the appearance of the
+#' plot: \describe{ \item{boxw}{the relative width of a marking box.}
+#' \item{boxh}{the relative height of a marking box.} \item{hbuff}{the
+#' horizontal separation around marking boxes; equals half the horizontal
+#' distance between two marking boxes.} \item{vbuff}{ditto for vertical
+#' separation.} \item{span}{passed on to \code{loess} used for the smoothing
+#' curve.} \item{nacol}{color for missing values of binary variables.}
+#' \item{degree}{if 0, no smoothing line is drawn; otherwise passed on to
+#' \code{loess} used for the smoothing curve.} \item{cex.label}{the character
+#' size for \code{grplabel}.} }
+#' 
+#' @param x a matrix or data frame containing the data.
+#' @param covariate the index of the column in \code{x} that contains the
+#' interval scaled variable, if any.
+#' @param grp cluster indices for the rows of \code{x}, used for assigning
+#' background color.
+#' @param grpcol colors corresponding to the clusters.
+#' @param grplabel cluster names.
+#' @param add logical indicating whether to start a new plot, or whether to add
+#' the plot to the existing one.
+#' @param control a list of parameters controlling the appearance of the plot,
+#' see Details.
+#' @note The plot looks like a more or less derelict picket fence, and
+#' 'picketplot' sounds somewhat like the 'pocketplot' used in geostatistics.
+#' @author Alexander Ploner <Alexander.Ploner@@ki.se>
+#' @seealso \code{\link{heatmap_plus}}
+#' @keywords hplot aplot
+#' @examples
+#' \dontrun{
+#' # without covariate
+#' mm = cbind(sample(0:1, 42, rep=TRUE), sample(0:1, 42, rep=TRUE))
+#' mm[sample(42, 5), 1] = NA
+#' oldPicketplot(mm)
+#' 
+#' # with clustering
+#' cl = rep(1:3, c(10,22,10))
+#' cn = c("Cluster I","Cluster II","Cluster III")
+#' cc = c("lightblue","lightgreen","lightpink") # windows palette
+#' oldPicketplot(mm, grp=cl, grplabel=cn, grpcol=cc)
+#' 
+#' # add a covariate; setting the colnames makes the variable labels
+#' mm = cbind(mm, rnorm(42) + cl/2)
+#' colnames(mm) = c("State A","State B", "X")
+#' oldPicketplot(mm, covariate=3,grp=cl, grplabel=cn, grpcol=cc)
+#' 
+#' # using extra controls
+#' oldPicketplot(mm, covariate=3,grp=cl, grplabel=cn, grpcol=cc, control=list(nacol="white", degree=0))
+#' } ## end dontrun
+#' 
+#' @export oldPicketplot
 oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL, 
                        add=FALSE, control=list()) 
 #
@@ -404,7 +716,8 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
 #       108011 AP name change to avoid collisions
 #
 {
-    
+    .Deprecated("picketPlot")
+
     # deal with the setup
     cc = list(boxw=1, boxh=4, hbuff=0.1, vbuff=0.1, span=1/3, nacol=gray(0.85), 
               degree=1, cex.label=1.5)
@@ -414,7 +727,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
     margin = par()$mar
     if (!add) {
         if (!is.null(covariate)) {
-            layout(matrix(c(1,2), nc=1))
+            layout(matrix(c(1,2), ncol=1))
             mm = margin
             mm[1] = 0
             par(mar=mm)
@@ -473,7 +786,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
         label = colnames(bindata)
         if (!is.null(label)) {
             yy = sort(unique((y0+y1)/2))
-            axis(2, at=yy, label=label, las=TRUE, font=2, col=par("bg"), col.axis=par("fg"), tick=FALSE)
+            axis(2, at=yy, labels=label, las=TRUE, font=2, col=par("bg"), col.axis=par("fg"), tick=FALSE)
         }
     }
     # the extra plot
@@ -506,14 +819,14 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
         label = colnames(x)[covariate]
         if (!is.null(label)) {
             yy = mean(range(covar))
-            axis(2, at=yy, label=label, las=TRUE, tick=FALSE, font=2)
+            axis(2, at=yy, labels=label, las=TRUE, tick=FALSE, font=2)
         }
     }
     
     # if grplabels are given, we add another horizontal axis to the 
     # last plot (independent of whether it is binvar or contvar)
     if (!is.null(grp) & !is.null(grplabel)) {
-        axis(1, xx.grp, label=FALSE, tcl=-1.5)
+        axis(1, xx.grp, labels=FALSE, tcl=-1.5)
         mids = (xx.grp[1:gg] + xx.grp[2:(gg+1)])/2
         # Is the grplabel ok?
         labelnum = length(grplabel)
@@ -525,11 +838,56 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
             grplabel = grplabel[1:gg]
         }
         # Go
-        axis(1, mids, label=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
+        axis(1, mids, labels=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
     }
             
 }
 
+
+
+#' Alternative color schemes
+#' 
+#' \code{RGBColVec} returns a vector of colors that is equally spaced from red
+#' through black to green, suitable for heatmaps.
+#' 
+#' \code{RainbowPastel} returns a vector of colors like \code{rainbow}, but
+#' more pastelly.
+#' 
+#' 
+#' @aliases RGBColVec RainbowPastel
+#' @param nrgcols,n desired number of colors
+#' @param blanche the amount of whiteness added; value between 0 and 255
+#' @param \dots extra arguments to \code{rainbow}
+#' @return A character vector of length \code{nrgcols} or \code{n} giving the
+#' RGB codes for the colors.
+#' @author \code{RGBColVec} is based on function \code{rgcolors.func} in
+#' package \code{sma} by Sandrine Dudoit and Jane Fridlyand.
+#' 
+#' \code{RGBColVec} as documented and \code{RainbowPastel} by Alexander Ploner
+#' @seealso \code{\link{heat.colors}}
+#' @keywords color
+#' @examples
+#' \dontrun{
+#'  # A Color Wheel
+#' pie(rep(1,12), col=RGBColVec(12))
+#' 
+#' # A color wheel in the original rainbow
+#' pie(rep(1,6), col=rainbow(6))
+#' 
+#' # Pastel
+#' pie(rep(1,6), col=RainbowPastel(6))
+#' 
+#' # Less whiteness
+#' pie(rep(1,6), col=RainbowPastel(6, blanche=127))
+#' 
+#' # More steps require less whiteness
+#' pie(rep(1,12), col=RainbowPastel(12, blanche=60))
+#' 
+#' # Test your screen & eyes: any differences?
+#' pie(rep(1,12), col=RainbowPastel(12, blanche=80))
+#' } ## end dontrun
+#' 
+#' @export RGBColVec
 RGBColVec = function (nrgcols=12)
 {
 # Name: RGBColVec
@@ -541,6 +899,7 @@ RGBColVec = function (nrgcols=12)
 #
 # Chng:
 #
+    .Deprecated("g2r.colors")
 
     k <- trunc(nrgcols/2)
     if (2*k == nrgcols) {   # the even case
@@ -554,4 +913,25 @@ RGBColVec = function (nrgcols=12)
     }
 
     colvec
+}
+
+#' @rdname RGBColVec
+#' @export RainbowPastel
+RainbowPastel =  function (n, blanche=200, ...)
+    #
+    # Name: RainbowPastel
+    # Desc: constructs a rainbow clolr vector, but more pastelly
+    # Auth: Alexander.Ploner@mep.ki.se      030304
+    #
+    # Chng:
+    #
+    
+{
+    
+    .Deprecated("BrewerClusterCol")
+    
+    cv = rainbow(n, ...)
+    rgbcv = col2rgb(cv)
+    rgbcv = pmin(rgbcv+blanche, 255)
+    rgb(rgbcv[1,], rgbcv[2,], rgbcv[3, ], maxColorValue=255)
 }

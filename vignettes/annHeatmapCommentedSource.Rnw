@@ -25,7 +25,7 @@
 
 \begin{document}
 
-\title{Commented source code for regular and annotated heatmaps in package \texttt{Heatplus}}
+\title{DEPRECATED: Commented source code for regular and annotated heatmaps in package \texttt{Heatplus}}
 \author{Alexander Ploner\\
 Medical Epidemiology \& Biostatistics\\
 Karolinska Institutet, Stockholm\\
@@ -33,12 +33,18 @@ email: \url{alexander.ploner@ki.se}}
 
 \maketitle
 \begin{abstract}
-This is the commented version of the R source for providing annotated and regular heatmaps. The code in Heatplus/R is a tangled version of this file.
+This is an older, commented version of the R source for providing annotated and regular heatmaps. The package source code used to be a tangled version of this file, but this is no longer the case. 
+
+This vignette is \fbox{DEPRECATED}.
 \end{abstract}
 
 \newpage
 \tableofcontents
 \newpage
+
+\pagestyle{myheadings}
+\markright{\hfill\textbf{!! D E P R E C A T E D !!}\hfill}
+
 
 %% Reduce output line width
 <<echo=FALSE, results=hide>>=
