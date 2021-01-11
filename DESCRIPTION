@@ -1,6 +1,6 @@
 Package: Heatplus
-Version: 2.99.0
-Date: 2015-09-03
+Version: 2.99.1
+Date: 2020-01-11
 Title: Heatmaps with row and/or column covariates and colored clusters  
 Author: Alexander Ploner <Alexander.Ploner@ki.se>
 Maintainer: Alexander Ploner <Alexander.Ploner@ki.se>

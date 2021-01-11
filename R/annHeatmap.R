@@ -1,5 +1,36 @@
 ### R code from vignette source 'vignettes/annHeatmapCommentedSource.Rnw'
 
+## Imports (very fine-grained, could prbably be simplified)
+#' @importFrom graphics axis
+#' @importFrom graphics box
+#' @importFrom graphics image
+#' @importFrom graphics layout
+#' @importFrom graphics lines
+#' @importFrom graphics par
+#' @importFrom graphics plot
+#' @importFrom graphics points
+#' @importFrom graphics rect
+#' 
+#' @importFrom grDevices col2rgb
+#' @importFrom grDevices gray
+#' @importFrom grDevices heat.colors
+#' @importFrom grDevices rainbow
+#' @importFrom grDevices rgb
+#' 
+#' @importFrom stats as.dendrogram
+#' @importFrom stats cutree
+#' @importFrom stats dist
+#' @importFrom stats hclust
+#' @importFrom stats loess
+#' @importFrom stats order.dendrogram
+#' @importFrom stats predict
+#' @importFrom stats quantile
+#' @importFrom stats reorder
+#' 
+#' @importFrom RColorBrewer brewer.pal.info
+#' @importFrom RColorBrewer brewer.pal
+
+
 ###################################################
 ### code chunk number 1: annHeatmapCommentedSource.Rnw:44-45
 ###################################################
