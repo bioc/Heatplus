@@ -10,6 +10,8 @@
 #' @importFrom graphics plot
 #' @importFrom graphics points
 #' @importFrom graphics rect
+#' @importFrom graphics layout.show
+#' @importFrom graphics segments
 #' 
 #' @importFrom grDevices col2rgb
 #' @importFrom grDevices gray
@@ -26,6 +28,10 @@
 #' @importFrom stats predict
 #' @importFrom stats quantile
 #' @importFrom stats reorder
+#' @importFrom stats dendrapply
+#' @importFrom stats model.matrix
+#' @importFrom stats na.exclude
+#' @importFrom stats naresid
 #' 
 #' @importFrom RColorBrewer brewer.pal.info
 #' @importFrom RColorBrewer brewer.pal
@@ -75,6 +81,7 @@ options(width=75)
 #' \code{\link{layout}}
 #' @keywords utilities
 #' @examples
+#'     def.par = par(no.readonly = TRUE) # save default, for resetting
 #' 
 #'     ## Heatmap with column dendrogram, column annotation, default legend
 #'     dnd = list(Row=list(status="no"), Col=list(status="yes"))
@@ -82,6 +89,8 @@ options(width=75)
 #'     ## 1 = heatmap, 2=dendrogram, 3=annotation, 4=legend
 #'     ll = heatmapLayout(dendrogram=dnd, annotation=ann, leg.side=NULL, show=TRUE)
 #'     ll
+#'     
+#'     par(def.par)  #- reset to default
 #' 
 #' @export heatmapLayout
 heatmapLayout = function(dendrogram, annotation, leg.side=NULL, show=FALSE)
@@ -168,7 +177,7 @@ heatmapLayout = function(dendrogram, annotation, leg.side=NULL, show=FALSE)
     ll.width = ll.width[ndx]
     ## Do it - show it
     if (show) {
-        layout(ll, width=ll.width, height=ll.height, respect=TRUE)            
+        layout(ll, widths=ll.width, heights=ll.height, respect=TRUE)            
         layout.show(max(ll))
     }
     return(list(plot=ll, width=ll.width, height=ll.height, legend.side=leg.side))
@@ -495,18 +504,18 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
             if ((cc$degree>0) & (cc$span>0)){
                 with(panels[[i]], lines(smo[,1], smo[,2]))
             }
-            with(panels[[i]], axis(covaxis, at=axcc, label=axlab))
+            with(panels[[i]], axis(covaxis, at=axcc, labels=axlab))
         }
         ## Name panel (regardless of type)
         if (!is.null(panels[[i]]$label)) {
-            axis(labaxis, at=panels[[i]]$labcc, label=panels[[i]]$label, las=las, tick=FALSE, font=2, col=par("bg"), col.axis=par("fg"))
+            axis(labaxis, at=panels[[i]]$labcc, labels=panels[[i]]$label, las=las, tick=FALSE, font=2, col=par("bg"), col.axis=par("fg"))
         }
     }
     # if grplabels are given, we add another horizontal axis to the 
     # last plot (independent of whether it is binvar or contvar)
     if (!is.null(grp) & !is.null(grplabel)) {
-        axis(grpaxis, grpcoord, label=FALSE, tcl=-1.5)
-        axis(grpaxis, mids, label=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
+        axis(grpaxis, grpcoord, labels=FALSE, tcl=-1.5)
+        axis(grpaxis, mids, labels=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
     }                                
     invisible(panels)
 }
@@ -949,9 +958,9 @@ getLeaves = function(x)
 print.annHeatmap = function(x, ...)
 {
     cat("annotated Heatmap\n\n")
-    cat("Rows: "); show(x$dendrogram$Row$dendro)
+    cat("Rows: "); print(x$dendrogram$Row$dendro)
     cat("\t", if (is.null(x$annotation$Row$data)) 0 else ncol(x$annotation$Row$data), " annotation variable(s)\n")
-    cat("Cols: "); show(x$dendrogram$Col$dendro)
+    cat("Cols: "); print(x$dendrogram$Col$dendro)
     cat("\t", if (is.null(x$annotation$Col$data)) 0 else ncol(x$annotation$Col$data), " annotation variable(s)\n")
     invisible(x)
 }
@@ -1001,7 +1010,7 @@ print.annHeatmap = function(x, ...)
 BrewerClusterCol = function(n, name="Pastel1")
 {
     ## Check the name of the palette
-    qualpal = subset(RColorBrewer::brewer.pal.info, category=="qual")
+    qualpal = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category=="qual", ]
     name = match.arg(name, rownames(qualpal))
     nmax = qualpal[name, "maxcolors"]
 
@@ -1569,8 +1578,8 @@ annHeatmap.default = function(x, annotation, dendrogram=list(clustfun=hclust, di
 #' @rawNamespace S3method(annHeatmap, ExpressionSet) 
 annHeatmap.ExpressionSet = function(x, ...)
 {
-    expmat = exprs(x)
-    anndat = pData(x)
+    expmat = Biobase::exprs(x)
+    anndat = Biobase::pData(x)
     annHeatmap(expmat, anndat, ...)
 }
 

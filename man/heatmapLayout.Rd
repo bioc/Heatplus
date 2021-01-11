@@ -43,6 +43,7 @@ annotation plots and legend as required, and compresses the resulting layout
 by removing empty slots.
 }
 \examples{
+    def.par = par(no.readonly = TRUE) # save default, for resetting
 
     ## Heatmap with column dendrogram, column annotation, default legend
     dnd = list(Row=list(status="no"), Col=list(status="yes"))
@@ -50,6 +51,8 @@ by removing empty slots.
     ## 1 = heatmap, 2=dendrogram, 3=annotation, 4=legend
     ll = heatmapLayout(dendrogram=dnd, annotation=ann, leg.side=NULL, show=TRUE)
     ll
+    
+    par(def.par)  #- reset to default
 
 }
 \seealso{

@@ -40,10 +40,11 @@ This routine makes use of the functions \code{plot.dendrogram} and
 \code{plotNode} in package \code{stats}.
 }
 \examples{
-
+\dontrun{
 data(swiss)
 cc = as.dendrogram(hclust(dist(swiss)))
 oldCutplot.dendrogram(cc, h=80)
+} 
 
 }
 \seealso{

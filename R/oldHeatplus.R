@@ -72,7 +72,7 @@
 #' \code{\link{annHeatmap}}
 #' @keywords hplot
 #' @examples
-#' 
+#' \dontrun{
 #' # create data
 #' mm = matrix(rnorm(1000, m=1), 100,10)
 #' mm = cbind(mm, matrix(rnorm(2000), 100, 20))
@@ -102,6 +102,7 @@
 #' 
 #' # truncate the data drastically
 #' heatmap_2(mm, legend=1, legfrac=10, trim=0.1)
+#' } ## end dontrun
 #' 
 #' @export heatmap_2
 heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust, 
@@ -233,7 +234,7 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
         }
     }
     # now go
-    layout(ll, width=ll.width, height=ll.height, respect=TRUE)            
+    layout(ll, widths=ll.width, heights=ll.height, respect=TRUE)            
     # the actual plot            
     par(mar=margin)
     image(1:ncol(x), 1:nrow(x), t(x), axes = FALSE, xlim = c(0.5, 
@@ -358,7 +359,7 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
 #' \code{\link{RGBColVec}}, \code{\link{annHeatmap}}, \code{\link{annHeatmap2}}
 #' @keywords hplot
 #' @examples
-#' 
+#'\dontrun{ 
 #' # create data
 #' mm = matrix(rnorm(1000, m=1), 100,10)
 #' mm = cbind(mm, matrix(rnorm(2000), 100, 20))
@@ -393,6 +394,7 @@ heatmap_2 = function (x, Rowv, Colv, distfun = dist, hclustfun = hclust,
 #' # Clustering without the dendrogram
 #' cc = cutree(hclust(dist(t(mm))), k=5)
 #' heatmap_plus(mm, addvar=addvar, cov=4, clus=cc, do.dendro=FALSE)
+#' } ## end dontrun
 #' 
 #' @export heatmap_plus
 heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
@@ -514,7 +516,7 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
         ll.height = c(ll.height, 1, 1)
     }
     # now go
-    layout(ll, width=ll.width, height=ll.height, respect=TRUE)            
+    layout(ll, widths=ll.width, heights=ll.height, respect=TRUE)            
     # fill in from the top, starting with the dendrogram
     mm = c(0,1,3,2)
     par(mar = mm)            
@@ -576,10 +578,11 @@ heatmap_plus = function (x, addvar, covariate=NULL, picket.control=list(),
 #' @seealso \code{\link{as.dendrogram}}
 #' @keywords hplot aplot cluster
 #' @examples
-#' 
+#' \dontrun{
 #' data(swiss)
 #' cc = as.dendrogram(hclust(dist(swiss)))
 #' oldCutplot.dendrogram(cc, h=80)
+#' } 
 #' 
 #' @export oldCutplot.dendrogram
 oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3, 
@@ -674,7 +677,7 @@ oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lw
 #' @seealso \code{\link{heatmap_plus}}
 #' @keywords hplot aplot
 #' @examples
-#' 
+#' \dontrun{
 #' # without covariate
 #' mm = cbind(sample(0:1, 42, rep=TRUE), sample(0:1, 42, rep=TRUE))
 #' mm[sample(42, 5), 1] = NA
@@ -693,7 +696,7 @@ oldCutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lw
 #' 
 #' # using extra controls
 #' oldPicketplot(mm, covariate=3,grp=cl, grplabel=cn, grpcol=cc, control=list(nacol="white", degree=0))
-#' 
+#' } ## end dontrun
 #' 
 #' @export oldPicketplot
 oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL, 
@@ -726,7 +729,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
     margin = par()$mar
     if (!add) {
         if (!is.null(covariate)) {
-            layout(matrix(c(1,2), nc=1))
+            layout(matrix(c(1,2), ncol=1))
             mm = margin
             mm[1] = 0
             par(mar=mm)
@@ -785,7 +788,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
         label = colnames(bindata)
         if (!is.null(label)) {
             yy = sort(unique((y0+y1)/2))
-            axis(2, at=yy, label=label, las=TRUE, font=2, col=par("bg"), col.axis=par("fg"), tick=FALSE)
+            axis(2, at=yy, labels=label, las=TRUE, font=2, col=par("bg"), col.axis=par("fg"), tick=FALSE)
         }
     }
     # the extra plot
@@ -818,14 +821,14 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
         label = colnames(x)[covariate]
         if (!is.null(label)) {
             yy = mean(range(covar))
-            axis(2, at=yy, label=label, las=TRUE, tick=FALSE, font=2)
+            axis(2, at=yy, labels=label, las=TRUE, tick=FALSE, font=2)
         }
     }
     
     # if grplabels are given, we add another horizontal axis to the 
     # last plot (independent of whether it is binvar or contvar)
     if (!is.null(grp) & !is.null(grplabel)) {
-        axis(1, xx.grp, label=FALSE, tcl=-1.5)
+        axis(1, xx.grp, labels=FALSE, tcl=-1.5)
         mids = (xx.grp[1:gg] + xx.grp[2:(gg+1)])/2
         # Is the grplabel ok?
         labelnum = length(grplabel)
@@ -837,7 +840,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
             grplabel = grplabel[1:gg]
         }
         # Go
-        axis(1, mids, label=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
+        axis(1, mids, labels=grplabel, font=2, cex.axis=cc$cex.label, tick=FALSE)
     }
             
 }
@@ -866,7 +869,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
 #' @seealso \code{\link{heat.colors}}
 #' @keywords color
 #' @examples
-#' 
+#' \dontrun{
 #'  # A Color Wheel
 #' pie(rep(1,12), col=RGBColVec(12))
 #' 
@@ -884,6 +887,7 @@ oldPicketplot = function (x, covariate=NULL, grp=NULL, grpcol, grplabel=NULL,
 #' 
 #' # Test your screen & eyes: any differences?
 #' pie(rep(1,12), col=RainbowPastel(12, blanche=80))
+#' } ## end dontrun
 #' 
 #' @export RGBColVec
 RGBColVec = function (nrgcols=12)

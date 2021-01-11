@@ -95,7 +95,7 @@ data comes from a heavy-tailed distribution, this can save the display from
 putting too many values into to few classes.
 }
 \examples{
-
+\dontrun{
 # create data
 mm = matrix(rnorm(1000, m=1), 100,10)
 mm = cbind(mm, matrix(rnorm(2000), 100, 20))
@@ -125,6 +125,7 @@ heatmap_2(mm, legend=1, legfrac=10)
 
 # truncate the data drastically
 heatmap_2(mm, legend=1, legfrac=10, trim=0.1)
+} ## end dontrun
 
 }
 \seealso{

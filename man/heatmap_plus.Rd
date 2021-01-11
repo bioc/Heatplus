@@ -117,7 +117,7 @@ putting too many values into to few classes. Alternatively, you can set
 the values.
 }
 \examples{
-
+\dontrun{ 
 # create data
 mm = matrix(rnorm(1000, m=1), 100,10)
 mm = cbind(mm, matrix(rnorm(2000), 100, 20))
@@ -152,6 +152,7 @@ heatmap_plus(mm, addvar=addvar, cov=4, h=20, col=RGBColVec(64), equal=TRUE)
 # Clustering without the dendrogram
 cc = cutree(hclust(dist(t(mm))), k=5)
 heatmap_plus(mm, addvar=addvar, cov=4, clus=cc, do.dendro=FALSE)
+} ## end dontrun
 
 }
 \seealso{

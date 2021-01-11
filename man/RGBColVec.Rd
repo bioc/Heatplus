@@ -29,7 +29,7 @@ through black to green, suitable for heatmaps.
 more pastelly.
 }
 \examples{
-
+\dontrun{
  # A Color Wheel
 pie(rep(1,12), col=RGBColVec(12))
 
@@ -47,6 +47,7 @@ pie(rep(1,12), col=RainbowPastel(12, blanche=60))
 
 # Test your screen & eyes: any differences?
 pie(rep(1,12), col=RainbowPastel(12, blanche=80))
+} ## end dontrun
 
 }
 \seealso{

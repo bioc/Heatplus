@@ -60,7 +60,7 @@ The plot looks like a more or less derelict picket fence, and
 'picketplot' sounds somewhat like the 'pocketplot' used in geostatistics.
 }
 \examples{
-
+\dontrun{
 # without covariate
 mm = cbind(sample(0:1, 42, rep=TRUE), sample(0:1, 42, rep=TRUE))
 mm[sample(42, 5), 1] = NA
@@ -79,7 +79,7 @@ oldPicketplot(mm, covariate=3,grp=cl, grplabel=cn, grpcol=cc)
 
 # using extra controls
 oldPicketplot(mm, covariate=3,grp=cl, grplabel=cn, grpcol=cc, control=list(nacol="white", degree=0))
-
+} ## end dontrun
 
 }
 \seealso{
