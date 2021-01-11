@@ -198,7 +198,7 @@ heatmapLayout = function(dendrogram, annotation, leg.side=NULL, show=FALSE)
 #'     defs = list(common.1=134, common.2=72, Row=list(row.only=14), Col=list(col.only=134))
 #'     args = list(common.1 = -1, Row=list(row.only=94, common.2=-15))
 #'     extractArg(args, defs)
-#' 
+#' @export modifyExistingList
 modifyExistingList = function(x, val)
 {
     if (is.null(x)) x = list()
@@ -220,6 +220,7 @@ modifyExistingList = function(x, val)
 ###################################################
 
 #' @rdname modifyExistingList
+#' @export extractArg
 extractArg = function(arglist, deflist)
 {
     if (missing(arglist)) arglist = NULL
@@ -913,6 +914,7 @@ getLeaves = function(x)
 #'     map1
 #' 
 #' @export print.annHeatmap
+#' @rawNamespace S3method(print, annHeatmap) 
 print.annHeatmap = function(x, ...)
 {
     cat("annotated Heatmap\n\n")
@@ -1348,6 +1350,7 @@ annHeatmap2 = function(x, dendrogram, annotation, cluster, labels, scale=c("row"
 #'     layout.show(4)
 #' 
 #' @export plot.annHeatmap
+#' @rawNamespace S3method(plot, annHeatmap)
 plot.annHeatmap = function(x, widths, heights, ...)
 {
 	## Preserve parameters that are set explicitly below
@@ -1522,6 +1525,9 @@ annHeatmap = function(x, ...) UseMethod("annHeatmap")
 ###################################################
 ### code chunk number 21: regHeatmap_Def
 ###################################################
+#' @rdname regHeatmap
+#' @export regHeatmap.default
+#' @rawNamespace S3method(regHeatmap, default)
 regHeatmap.default = function(x, dendrogram=list(clustfun=hclust, distfun=dist, status="yes"), labels=NULL, legend=TRUE, ...)
 {
     ret = annHeatmap2(x, dendrogram=dendrogram, annotation=NULL, cluster=NULL,  labels=labels, legend=legend, ...)
@@ -1532,6 +1538,9 @@ regHeatmap.default = function(x, dendrogram=list(clustfun=hclust, distfun=dist, 
 ###################################################
 ### code chunk number 22: annHeatmap_Def
 ###################################################
+#' @rdname annHeatmap
+#' @export annHeatmap.default
+#' @rawNamespace S3method(annHeatmap, default)
 annHeatmap.default = function(x, annotation, dendrogram=list(clustfun=hclust, distfun=dist, Col=list(status="yes"), Row=list(status="hidden")), cluster=NULL, labels=NULL, legend=TRUE, ...)
 {
 	if (!is.data.frame(annotation)) stop("Argument 'annoation' needs to be data frame")
@@ -1544,7 +1553,10 @@ annHeatmap.default = function(x, annotation, dendrogram=list(clustfun=hclust, di
 ###################################################
 ### code chunk number 23: annHeatmapExpressionSet_Def
 ###################################################
-annHeatmap.ExpressionSet =function(x, ...)
+#' @rdname annHeatmap
+#' @export annHeatmap.ExpressionSet
+#' @rawNamespace S3method(annHeatmap, ExpressionSet) 
+annHeatmap.ExpressionSet = function(x, ...)
 {
     expmat = exprs(x)
     anndat = pData(x)

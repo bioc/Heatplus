@@ -6,6 +6,14 @@
 \title{Regular heatmaps with a legend}
 \usage{
 regHeatmap(x, ...)
+
+\method{regHeatmap}{default}(
+  x,
+  dendrogram = list(clustfun = hclust, distfun = dist, status = "yes"),
+  labels = NULL,
+  legend = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a numerical matrix}

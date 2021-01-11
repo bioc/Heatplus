@@ -63,7 +63,6 @@ Examples.
     defs = list(common.1=134, common.2=72, Row=list(row.only=14), Col=list(col.only=134))
     args = list(common.1 = -1, Row=list(row.only=94, common.2=-15))
     extractArg(args, defs)
-
 }
 \seealso{
 \code{\link{annHeatmap2}}

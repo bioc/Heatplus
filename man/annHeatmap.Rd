@@ -7,6 +7,19 @@
 \title{Annotated heatmaps}
 \usage{
 annHeatmap(x, ...)
+
+\method{annHeatmap}{default}(
+  x,
+  annotation,
+  dendrogram = list(clustfun = hclust, distfun = dist, Col = list(status = "yes"), Row
+    = list(status = "hidden")),
+  cluster = NULL,
+  labels = NULL,
+  legend = TRUE,
+  ...
+)
+
+\method{annHeatmap}{ExpressionSet}(x, ...)
 }
 \arguments{
 \item{x}{either a numerical matrix with the data for the central heatmap
