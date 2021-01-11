@@ -985,26 +985,6 @@ BrewerClusterCol = function(n, name="Pastel1")
 
 
 ###################################################
-### code chunk number 16: RainbowPastel_Def
-###################################################
-RainbowPastel =  function (n, blanche=200, ...)
-#
-# Name: RainbowPastel
-# Desc: constructs a rainbow clolr vector, but more pastelly
-# Auth: Alexander.Ploner@mep.ki.se      030304
-#
-# Chng:
-#
-
-{
-    cv = rainbow(n, ...)
-    rgbcv = col2rgb(cv)
-    rgbcv = pmin(rgbcv+blanche, 255)
-    rgb(rgbcv[1,], rgbcv[2,], rgbcv[3, ], maxColorValue=255)
-}
-
-
-###################################################
 ### code chunk number 17: cutplot_dendrogam_Def
 ###################################################
 cutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3, ...)
@@ -1125,7 +1105,7 @@ cutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3
 #' for coloring both the sub-trees of the dendrogram and the corresponding area
 #' in the annotation plot (if there is one). This is either a vector of colors,
 #' or a palette function that takes a number and returns a vector of colors of
-#' the specified length; defaults to \code{RainbowPastel}} \item{grp}{an
+#' the specified length; defaults to \code{BrewerClusterCol}} \item{grp}{an
 #' override argument that directly specifies group memberships for the
 #' features/samples, completely bypassing the whole \code{dendrogram} and
 #' \code{cuth} mechanism. This probably only works for
@@ -1173,7 +1153,7 @@ cutplot.dendrogram = function(x, h, cluscol, leaflab= "none", horiz=FALSE, lwd=3
 #' @return An object of class \code{annHeatmap}. Use \code{plot} to display it
 #' graphically. 
 #' @seealso \code{\link{heatmapLayout}}, \code{\link{niceBreaks}},
-#' \code{\link{breakColors}}, \code{\link{g2r.colors}}
+#' \code{\link{breakColors}}, \code{\link{g2r.colors}}, \code{\link{BrewerClusterCol}}
 #' @keywords hplot
 #' @examples
 #' 

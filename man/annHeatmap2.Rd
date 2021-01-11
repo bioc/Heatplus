@@ -104,7 +104,7 @@ labels} \item{col}{colors for the different clusters; the colors are used
 for coloring both the sub-trees of the dendrogram and the corresponding area
 in the annotation plot (if there is one). This is either a vector of colors,
 or a palette function that takes a number and returns a vector of colors of
-the specified length; defaults to \code{RainbowPastel}} \item{grp}{an
+the specified length; defaults to \code{BrewerClusterCol}} \item{grp}{an
 override argument that directly specifies group memberships for the
 features/samples, completely bypassing the whole \code{dendrogram} and
 \code{cuth} mechanism. This probably only works for
@@ -138,6 +138,6 @@ plot(map1)
 }
 \seealso{
 \code{\link{heatmapLayout}}, \code{\link{niceBreaks}},
-\code{\link{breakColors}}, \code{\link{g2r.colors}}
+\code{\link{breakColors}}, \code{\link{g2r.colors}}, \code{\link{BrewerClusterCol}}
 }
 \keyword{hplot}
