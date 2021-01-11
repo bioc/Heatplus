@@ -6,6 +6,8 @@
 \title{Alternative color schemes}
 \usage{
 RGBColVec(nrgcols = 12)
+
+RainbowPastel(n, blanche = 200, ...)
 }
 \arguments{
 \item{nrgcols, n}{desired number of colors}
