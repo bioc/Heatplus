@@ -468,7 +468,7 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
             if ((cc$degree>0) & (cc$span>0)){
                 with(panels[[i]], lines(smo[,1], smo[,2]))
             }
-            with(panels[[i]], axis(covaxis, at=axcc, labels=axlab))
+            with(panels[[i]], axis(covaxis, at=axcc, labels=axlab, las = las))
             ## Draw the base reference line
             draw_box(panels[[i]]$low_hi)
         }
