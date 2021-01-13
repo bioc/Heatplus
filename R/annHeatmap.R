@@ -400,7 +400,10 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
             labcc = if (!is.null(label)) mean(range(yval, na.rm=TRUE)) else NULL
             axlab = pretty(range(xv, na.rm=TRUE))
             axcc  = voff + cc$vbuff*cc$numfac + ((axlab - rr[1])/(rr[2] - rr[1]))*cc$boxh*cc$numfac
-            panels[[i]] = list(raw=cbind(xcent, yval), smo=cbind(xcent, yy), label=label, labcc=labcc, axlab=axlab, axcc=axcc)
+            panels[[i]] = list(raw = cbind(xcent, yval), smo = cbind(xcent, yy), 
+                               label = label, labcc = labcc, 
+                               axlab = axlab, axcc = axcc, 
+                               low_hi = c(voff, voff + panelh*cc$numfac))
             voff = voff + panelh*cc$numfac
         }
     }
@@ -427,11 +430,13 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
         labaxis = 2
         covaxis = 4
         las = 1        
+        draw_box = function(x) abline(h = x)
     } else {
         grpaxis = 4
         labaxis = 3
         covaxis = 1
         las = 3
+        draw_box = function(x) abline(v = x - totalh)
         ## Rotate
         LL = h2v(LL)
         UR = h2v(UR)
@@ -464,6 +469,8 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
                 with(panels[[i]], lines(smo[,1], smo[,2]))
             }
             with(panels[[i]], axis(covaxis, at=axcc, labels=axlab))
+            ## Draw the base reference line
+            draw_box(panels[[i]]$low_hi)
         }
         ## Name panel (regardless of type)
         if (!is.null(panels[[i]]$label)) {
