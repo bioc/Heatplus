@@ -35,31 +35,14 @@ specified in \code{grp}}
 \item{asIs}{a logical value indicating whether \code{x} should be passed to
 \code{convAnnData} for pre-processing or not. Defaults to \code{FALSE}.}
 
-\item{control}{a list of control parameters that determines the appearance
-of the plot \itemize{ \item\code{boxw} is the relative length of the short
-side of a box marking (width for a horizontal plot). Default is 1.
-\item\code{boxh} is the relative length of the long side of a box marking
-(default: 4) \item\code{hbuff} is the relative distance between two box
-markings for the same variable (horizontal buffer for a horizontal plot).
-Default is 0.1 \item\code{vbuff} is the relative distance between two box
-markings for the same subject, but different variables (default: 0.1)
-\item\code{cex.label} is the expansion factor for plotting cluster labels
-\item\code{numfac} is the expansion factor indicating how much higher (for a
-horizontal plot) or wider (for a vertical plot) panels with numerical
-variables are than panels for factor variables.  \item\code{nacol} is the
-color for box markings indicating missing values (default:
-\code{gray(0.85)}) \item\code{span} is the span argument for the loess
-smoother. Default is 1/3; setting this to zero switches off smoothing.
-\item\code{degree} is the degree of loess smoothing. Default is 1; setting
-this to zero switches off smoothing \item\code{pch} is the plotting
-character for numerical variables \item\code{cex.pch} is the size of the
-plotting character for numerical variables \item\code{col.pch} is the color
-of the plotting character for numerical variables }}
+\item{control}{a named list of control parameters that determines the visual 
+appearance of the plot; see \code{picketPlotControl} for details.}
 }
 \value{
-Depending on data and arguments, the value of the last \code{axis}
-function call. Irrelevant, as this function is called for its side effect of
-producing a plot.
+Invisibly, a list containing the data and parameters used for plotting
+each binary indicator and numerical variable, respectively. This is an internal
+data structure, mostly useful for debugging. Irrelevant, as the main desired
+effetc is a plot to the current graphical device.
 }
 \description{
 Displays a data frame of both factor and numerical variables in parallel
@@ -92,6 +75,6 @@ values.
 }
 \seealso{
 \code{\link{annHeatmap2}}, \code{\link{convAnnData}},
-\code{\link{par}}
+\code{\link{par}}, \code{\link{picketPlotControl}}
 }
 \keyword{hplot}

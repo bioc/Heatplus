@@ -33,7 +33,7 @@
 #' 
 #' @importFrom RColorBrewer brewer.pal.info
 #' @importFrom RColorBrewer brewer.pal
-
+NULL
 
 
 #' Generate a layout for an (annotated) heatmap
@@ -277,31 +277,16 @@ extractArg = function(arglist, deflist)
 #' (default) or vertically
 #' @param asIs a logical value indicating whether \code{x} should be passed to
 #' \code{convAnnData} for pre-processing or not. Defaults to \code{FALSE}.
-#' @param control a list of control parameters that determines the appearance
-#' of the plot \itemize{ \item\code{boxw} is the relative length of the short
-#' side of a box marking (width for a horizontal plot). Default is 1.
-#' \item\code{boxh} is the relative length of the long side of a box marking
-#' (default: 4) \item\code{hbuff} is the relative distance between two box
-#' markings for the same variable (horizontal buffer for a horizontal plot).
-#' Default is 0.1 \item\code{vbuff} is the relative distance between two box
-#' markings for the same subject, but different variables (default: 0.1)
-#' \item\code{cex.label} is the expansion factor for plotting cluster labels
-#' \item\code{numfac} is the expansion factor indicating how much higher (for a
-#' horizontal plot) or wider (for a vertical plot) panels with numerical
-#' variables are than panels for factor variables.  \item\code{nacol} is the
-#' color for box markings indicating missing values (default:
-#' \code{gray(0.85)}) \item\code{span} is the span argument for the loess
-#' smoother. Default is 1/3; setting this to zero switches off smoothing.
-#' \item\code{degree} is the degree of loess smoothing. Default is 1; setting
-#' this to zero switches off smoothing \item\code{pch} is the plotting
-#' character for numerical variables \item\code{cex.pch} is the size of the
-#' plotting character for numerical variables \item\code{col.pch} is the color
-#' of the plotting character for numerical variables }
-#' @return Depending on data and arguments, the value of the last \code{axis}
-#' function call. Irrelevant, as this function is called for its side effect of
-#' producing a plot.
+#' @param control a named list of control parameters that determines the visual 
+#' appearance of the plot; see \code{picketPlotControl} for details.
+#' 
+#' @return Invisibly, a list containing the data and parameters used for plotting
+#' each binary indicator and numerical variable, respectively. This is an internal
+#' data structure, mostly useful for debugging. Irrelevant, as the main desired
+#' effetc is a plot to the current graphical device. 
+#' 
 #' @seealso \code{\link{annHeatmap2}}, \code{\link{convAnnData}},
-#' \code{\link{par}}
+#' \code{\link{par}}, \code{\link{picketPlotControl}}
 #' @keywords hplot
 #' @examples
 #' 
@@ -495,15 +480,66 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
 }
 
 
-#' @rdname getLeaves 
+#' Default parameter settings for picketPlot
+#' 
+#' This function returns a named list of parameters that affect how a
+#' picketPlot is generated. This list can be used as a template for 
+#' overriding the defaults partially or completely.
+#' 
+#' @details The following parameter affects the overall appearance of the plot:
+#' \itemize{ 
+#'   \item\code{cex.label} is the expansion factor for the size of the cluster labels at
+#'     the bottom of the plot; default is 1.5.
+#' }
+#' 
+#' The following parameters directly affect how binary indicator variables are 
+#' displayed:
+#' \itemize{ 
+#'   \item\code{boxw} is the relative length of the short side of a box marking 
+#'      (width for a horizontal plot); default is 1.
+#'   \item\code{boxh} is the relative length of the long side of a box marking
+#'     (default: 4) 
+#'   \item\code{hbuff} is the relative distance between two box markings for the 
+#'     same variable (horizontal buffer for a horizontal plot); default is 0.1 
+#'   \item\code{vbuff} is the relative distance between two box
+#'      markings for the same subject, but different variables (default: 0.1)
+#'   \item\code{nacol} is the color for box markings indicating missing values 
+#'     (default: \code{gray(0.85)}) 
+#'  }
+#'  Note that \code{boxh} and \code{vbuff} also affect the display of numerical
+#'  variables as a scatter plot: as the amount of vertical space allowed for a 
+#'  single numerical variable (see also \code{numfac} below) and the vertical 
+#'  space between two neighboring variable panels (binary or ornumerical), 
+#'  respectively.
+#'
+#' The following parameters only affect the display of a numerical variable:
+#' \itemize{
+#'   \item\code{numfac} is the expansion factor indicating how much higher (for a
+#'     horizontal plot) or wider (for a vertical plot) panels with numerical
+#'     variables are than a panels for a single binary indicator
+#'   \item\code{span} is the span argument for the loess smoother. Default is 1/3; 
+#'     setting this to zero switches off smoothing.
+#'   \item\code{degree} is the degree of loess smoothing. Default is 1; setting
+#'     this to zero switches off smoothing 
+#'   \item\code{pch} is the plotting character for numerical variables; uses the 
+#'     device default. 
+#'   \item\code{cex.pch} is the size of the plotting character for numerical 
+#'     variables; uses the device default. 
+#'   \item\code{col.pch} is the color of the plotting character for numerical 
+#'     variables; uses the device default.
+#' }
+#'  
+#' @return A named list
+#' @seealso \code{\link{picketPlot}}, \code{\link{par}}
+#' @export picketPlotControl
 picketPlotControl = function()
 {
-    list(boxw=1, boxh=4, hbuff=0.1, vbuff=0.1, span=1/3, nacol=gray(0.85), 
-         degree=1, cex.label=1.5, numfac=2, pch=par("pch"), cex.pch=par("cex"),
-         col.pch=par("col") )
+    list(cex.label = 1.5,
+         boxw = 1, boxh = 4, hbuff = 0.1, vbuff = 0.1, nacol = gray(0.85), 
+         span = 1/3, degree = 1, numfac = 2, 
+         pch = par("pch"), cex.pch = par("cex"), col.pch = par("col") 
+    )
 }
-
-
 
 #' Get nice (symmetric) breaks for an interval
 #' 
@@ -868,7 +904,7 @@ cutree.dendrogram = function(x, h)
 #' These functions are currently undocumented. Please refer to the source and
 #' source comments if you feel you need to use them.
 #' 
-#' @aliases getLeaves picketPlotControl
+#' @aliases getLeaves
 #' @keywords internal
 getLeaves = function(x)
 {
