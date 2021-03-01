@@ -912,6 +912,7 @@ cutree.dendrogram = function(x, h)
 #' source comments if you feel you need to use them.
 #' 
 #' @aliases getLeaves
+#' @rdname Undocumented
 #' @keywords internal
 getLeaves = function(x)
 {
