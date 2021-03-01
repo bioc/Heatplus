@@ -398,7 +398,14 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
             }
             label = colnames(x)[i]
             labcc = if (!is.null(label)) mean(range(yval, na.rm=TRUE)) else NULL
-            axlab = pretty(range(xv, na.rm=TRUE))
+            ## Shrink the axis range for the labels, if specified
+            if ( (cc$label_axis_shrink >= 0) & (cc$label_axis_shrink <= 1) ) {
+                axis_offset <- cc$label_axis_shrink * (rr[2] - rr[1])/2
+            } else {
+                axis_offset <- 0
+            }
+            axis_range <- c(rr[1] + axis_offset, rr[2] - axis_offset)
+            axlab = pretty(axis_range)
             axcc  = voff + cc$vbuff*cc$numfac + ((axlab - rr[1])/(rr[2] - rr[1]))*cc$boxh*cc$numfac
             panels[[i]] = list(raw = cbind(xcent, yval), smo = cbind(xcent, yy), 
                                label = label, labcc = labcc, 
@@ -470,7 +477,7 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
             }
             with(panels[[i]], axis(covaxis, at=axcc, labels=axlab, las = las))
             ## Draw the base reference line
-            draw_box(panels[[i]]$low_hi)
+            if (cc$plot_baseline) draw_box(panels[[i]]$low_hi)
         }
         ## Name panel (regardless of type)
         if (!is.null(panels[[i]]$label)) {
@@ -534,17 +541,29 @@ picketPlot = function (x, grp=NULL, grpcol, grplabel=NULL, horizontal=TRUE, asIs
 #'     variables; uses the device default. 
 #'   \item\code{col.pch} is the color of the plotting character for numerical 
 #'     variables; uses the device default.
+#'   \item\code{label_axis_shrink} controls the range of the axis for which axis 
+#'     ticks are labeled: by default, labels covering the whole observed range 
+#'     are defined (via a call to \code{pretty}); if set to a number between zero
+#'     and one, the range covered by labels is shortened by that fraction and 
+#'     centered within the observed range (and the fed to \code{pretty}); this can 
+#'     be used to avoid overlapping labels for multiple adjacent panes with 
+#'     numerical variables. 
+#'   \item\code{plot_baseline} is a logical value indicating whether to draw 
+#'     a baseline for panes showing numerical variables: FALSE by default, this
+#'     can be useful to visually separate multiple adjacent panes with numerical
+#'     variables. 
 #' }
 #'  
 #' @return A named list
-#' @seealso \code{\link{picketPlot}}, \code{\link{par}}
+#' @seealso \code{\link{picketPlot}}, \code{\link{par}}, \code{\link{pretty}}
 #' @export picketPlotControl
 picketPlotControl = function()
 {
     list(cex.label = 1.5,
          boxw = 1, boxh = 4, hbuff = 0.1, vbuff = 0.1, nacol = gray(0.85), 
          span = 1/3, degree = 1, numfac = 2, 
-         pch = par("pch"), cex.pch = par("cex"), col.pch = par("col") 
+         pch = par("pch"), cex.pch = par("cex"), col.pch = par("col"),
+         label_axis_shrink = 0, plot_baseline = FALSE 
     )
 }
 

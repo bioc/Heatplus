@@ -56,8 +56,19 @@ The following parameters only affect the display of a numerical variable:
     variables; uses the device default. 
   \item\code{col.pch} is the color of the plotting character for numerical 
     variables; uses the device default.
+  \item\code{label_axis_shrink} controls the range of the axis for which axis 
+    ticks are labeled: by default, labels covering the whole observed range 
+    are defined (via a call to \code{pretty}); if set to a number between zero
+    and one, the range covered by labels is shortened by that fraction and 
+    centered within the observed range (and the fed to \code{pretty}); this can 
+    be used to avoid overlapping labels for multiple adjacent panes with 
+    numerical variables. 
+  \item\code{plot_baseline} is a logical value indicating whether to draw 
+    a baseline for panes showing numerical variables: FALSE by default, this
+    can be useful to visually separate multiple adjacent panes with numerical
+    variables. 
 }
 }
 \seealso{
-\code{\link{picketPlot}}, \code{\link{par}}
+\code{\link{picketPlot}}, \code{\link{par}}, \code{\link{pretty}}
 }
