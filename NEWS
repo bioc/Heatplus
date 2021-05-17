@@ -1,3 +1,8 @@
+Changes in version 2.99.4:
+    + Improved label- and axis handling for panels with continuous covariates
+    + Formally deprecated heatmap_2 and heatmap_plus
+    + Refactored to switch to devtools tool chain
+
 Changes in version 2.23.1
     + Resolved issue with inconsistent plotting on the same device
 
