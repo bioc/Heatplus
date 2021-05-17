@@ -1,4 +1,4 @@
-## Imports (very fine-grained, could prbably be simplified)
+## Imports (very fine-grained, could probably be simplified)
 #' @importFrom graphics axis
 #' @importFrom graphics box
 #' @importFrom graphics image
@@ -9,6 +9,7 @@
 #' @importFrom graphics points
 #' @importFrom graphics rect
 #' @importFrom graphics layout.show
+#' @importFrom graphics abline
 #' @importFrom graphics segments
 #' 
 #' @importFrom grDevices col2rgb
